@@ -1,0 +1,173 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  # Allow manual triggers from GitHub UI
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, queue subsequent runs
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Check if only public files changed
+        id: check-changes
+        run: |
+          # For manual workflow dispatch, always do full build
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "Manual trigger detected, forcing full build"
+            echo "needs_build=true" >> $GITHUB_OUTPUT
+          elif [ -z "${{ github.event.before }}" ]; then
+            echo "No previous commit available, forcing full build"
+            echo "needs_build=true" >> $GITHUB_OUTPUT
+          else
+            # Check if there are any changes outside of public/ folder
+            changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+            echo "Changed files:"
+            echo "$changed_files"
+            
+            # Filter out public/ files and see if anything else changed
+            non_public_changes=$(echo "$changed_files" | grep -v "^public/" || true)
+            
+            if [ -n "$non_public_changes" ]; then
+              echo "Code changes detected outside public/ folder:"
+              echo "$non_public_changes"
+              echo "needs_build=true" >> $GITHUB_OUTPUT
+            else
+              echo "Only public/ files changed, attempting cached build"
+              echo "needs_build=false" >> $GITHUB_OUTPUT
+            fi
+          fi
+        continue-on-error: true
+
+      - name: Extract repository name
+        run: echo "REPO_NAME=$(echo ${{ github.repository }} | cut -d'/' -f2)" >> $GITHUB_ENV
+
+      - name: Check for custom domain
+        id: check-custom-domain
+        run: |
+          if [ -f "CNAME" ]; then
+            echo "has_custom_domain=true" >> $GITHUB_OUTPUT
+            echo "Found custom domain: $(cat CNAME)"
+          else
+            echo "has_custom_domain=false" >> $GITHUB_OUTPUT
+            echo "No custom domain configured"
+          fi
+
+      - name: Restore previous build (if only config changed)
+        id: restore-build
+        if: steps.check-changes.outputs.needs_build == 'false'
+        uses: actions/cache/restore@v4
+        with:
+          path: ./build
+          key: ${{ runner.os }}-build-${{ github.repository }}-latest
+          restore-keys: |
+            ${{ runner.os }}-build-${{ github.repository }}-
+        continue-on-error: true
+
+      - name: Force build if cache restore failed
+        if: steps.check-changes.outputs.needs_build == 'false' && steps.restore-build.outputs.cache-hit != 'true'
+        run: |
+          echo "No previous build found, forcing full build"
+          echo "needs_build=true" >> $GITHUB_OUTPUT
+        id: force-build
+
+      - name: Cache node_modules
+        if: steps.check-changes.outputs.needs_build == 'true' || steps.force-build.outputs.needs_build == 'true'
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            ~/.yarn/cache
+          key: ${{ runner.os }}-deps-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-
+
+      - name: Install dependencies
+        if: steps.check-changes.outputs.needs_build == 'true' || steps.force-build.outputs.needs_build == 'true'
+        run: yarn install --frozen-lockfile --prefer-offline
+
+      - name: Build with repository base path
+        if: ${{ steps.check-custom-domain.outputs.has_custom_domain == 'false' && (steps.check-changes.outputs.needs_build == 'true' || steps.force-build.outputs.needs_build == 'true') }}
+        run: yarn build:spa
+        env:
+          # Set the base path for GitHub Pages using repo name
+          PUBLIC_PATH: /${{ env.REPO_NAME }}/
+          # Also set it as VITE environment variables
+          VITE_PUBLIC_PATH: /${{ env.REPO_NAME }}/
+          VITE_BASE_URL: /${{ env.REPO_NAME }}
+
+      - name: Build with root base path (for custom domain)
+        if: ${{ steps.check-custom-domain.outputs.has_custom_domain == 'true' && (steps.check-changes.outputs.needs_build == 'true' || steps.force-build.outputs.needs_build == 'true') }}
+        run: yarn build:spa
+        env:
+          # For custom domains, use root path
+          PUBLIC_PATH: /
+          VITE_PUBLIC_PATH: /
+          VITE_BASE_URL: ""
+
+      - name: Copy updated public files to build (if using cached build)
+        if: steps.check-changes.outputs.needs_build == 'false' && steps.restore-build.outputs.cache-hit == 'true'
+        run: |
+          if [ ! -d "./build/client" ]; then
+            echo "❌ Build directory not found in cache, this should not happen"
+            exit 1
+          fi
+          
+          # Copy the entire public folder - existing files will be overwritten
+          cp -r public/* ./build/client/
+          echo "✅ Copied all public files to build output"
+
+      - name: Cache build artifacts
+        if: steps.check-changes.outputs.needs_build == 'true' || steps.force-build.outputs.needs_build == 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ./build
+          key: ${{ runner.os }}-build-${{ github.repository }}-${{ github.sha }}
+
+      - name: Cache build artifacts as latest
+        if: steps.check-changes.outputs.needs_build == 'true' || steps.force-build.outputs.needs_build == 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ./build
+          key: ${{ runner.os }}-build-${{ github.repository }}-latest
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+        with:
+          token: ${{ secrets.TEMPLATE_PAT }}
+          enablement: true
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "./build/client"
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
