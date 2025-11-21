@@ -52,6 +52,79 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-self.addEventListener('fetch', () => {
+self.addEventListener('fetch', (event) => {
+  const { request } = event;
+  const url = new URL(request.url);
+
+  if (request.method !== 'GET' || !url.protocol.startsWith('http')) {
+    return;
+  }
+
+  if (url.pathname.includes('/sw.js') || url.pathname.includes('/manifest.json')) {
+    return;
+  }
+
+  const isModuleRequest = /\.(js|mjs|ts)$/i.test(url.pathname) || 
+                          request.destination === 'script' ||
+                          request.destination === 'worker';
+  
+  const isHashedModule = isModuleRequest && 
+                         /\/assets\/.*-[A-Za-z0-9_-]{8,}\.(js|mjs)$/.test(url.pathname);
+  
+  if (isModuleRequest && !isHashedModule) {
+    return;
+  }
+
+  event.respondWith(
+    initializeCacheName().then(() => {
+      if (isHashedModule) {
+        return caches.match(request).then((cachedResponse) => {
+          if (cachedResponse) {
+            return cachedResponse;
+          }
+          return fetch(request).then((response) => {
+            if (response && response.status === 200 && response.type === 'basic') {
+              const responseToCache = response.clone();
+              caches.open(CACHE_NAME).then((cache) => {
+                cache.put(request, responseToCache).catch((err) => {
+                  console.warn('Failed to cache hashed module:', url.pathname, err);
+                });
+              });
+            }
+            return response;
+          });
+        });
+      }
+
+      return fetch(request)
+        .then((response) => {
+          if (response && response.status === 200 && response.type === 'basic') {
+            const isStaticAsset = /\.(woff2?|png|jpg|jpeg|svg|webp|ico|css)$/i.test(url.pathname);
+            
+            if (isStaticAsset) {
+              const responseToCache = response.clone();
+              caches.open(CACHE_NAME).then((cache) => {
+                cache.put(request, responseToCache).catch((err) => {
+                  console.warn('Failed to cache response:', url.pathname, err);
+                });
+              });
+            }
+          }
+
+          return response;
+        })
+        .catch(() => {
+          return caches.match(request).then((cachedResponse) => {
+            if (cachedResponse) {
+              return cachedResponse;
+            }
+            throw new Error(`Failed to fetch ${url.pathname}`);
+          });
+        });
+    }).catch((error) => {
+      console.warn('Service worker fetch handler error:', url.pathname, error.message);
+      throw error;
+    })
+  );
 });
 
