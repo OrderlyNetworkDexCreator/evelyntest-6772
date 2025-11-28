@@ -10,7 +10,7 @@ import { createSymbolDataAdapter } from "@/utils/symbol-filter";
 import { DemoGraduationChecker } from "@/components/DemoGraduationChecker";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import ServiceDisclaimerDialog from "./ServiceRestrictionsDialog";
-// import { useIpRestriction } from "@/hooks/useIpRestriction";
+import { useIpRestriction } from "@/hooks/useIpRestriction";
 
 const NETWORK_ID_KEY = "orderly_network_id";
 
@@ -73,7 +73,7 @@ const WalletConnector = lazy(() => import("@/components/orderlyProvider/walletCo
 const OrderlyProvider = (props: { children: ReactNode }) => {
 	const config = useOrderlyConfig();
 	const networkId = getNetworkId();
-  // const { isRestricted } = useIpRestriction();
+	const { isRestricted } = useIpRestriction();
 	
 	const privyAppId = getRuntimeConfig('VITE_PRIVY_APP_ID');
 	const usePrivy = !!privyAppId;
@@ -158,16 +158,16 @@ const OrderlyProvider = (props: { children: ReactNode }) => {
 		availableLanguages.includes(lang.localCode)
 	);
 
-  // if (isRestricted) {
-  //   return (
-  //     <>
-  //       <ServiceDisclaimerDialog isRestricted={isRestricted} />
-  //       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#101014', color: '#fff', fontSize: '2rem', fontWeight: 'bold' }}>
-  //         Service not available in your region.
-  //       </div>
-  //     </>
-  //   );
-  // }
+	if (isRestricted) {
+		return (
+			<>
+				<ServiceDisclaimerDialog isRestricted={isRestricted} />
+				<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#101014', color: '#fff', fontSize: '2rem', fontWeight: 'bold' }}>
+					Service not available in your region.
+				</div>
+			</>
+		);
+	}
 
 	const appProvider = (
 		<OrderlyAppProvider
@@ -182,7 +182,7 @@ const OrderlyProvider = (props: { children: ReactNode }) => {
 			dataAdapter={dataAdapter}
 		>
 			<DemoGraduationChecker />
-      <ServiceDisclaimerDialog isRestricted={false} />
+			<ServiceDisclaimerDialog isRestricted={isRestricted} />
 			{props.children}
 		</OrderlyAppProvider>
 	);

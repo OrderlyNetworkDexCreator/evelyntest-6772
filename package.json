@@ -36,6 +36,7 @@
     "@solana/wallet-adapter-wallets": "^0.19.36",
     "@tanstack/query-core": "^5.79.0",
     "@web3-onboard/walletconnect": "^2.6.2",
+    "ip-range-check": "^0.2.0",
     "isbot": "^4.1.0",
     "lucide-react": "^0.544.0",
     "react": "^18.2.0",

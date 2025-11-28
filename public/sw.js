@@ -2,6 +2,8 @@ let CACHE_NAME = 'orderly-dex-v1';
 const CACHE_VERSION = 'v1';
 let cacheNameInitialized = false;
 
+const NEVER_CACHE = ['/', '/index.html', '/config.js'];
+
 async function initializeCacheName() {
   if (cacheNameInitialized) {
     return;
@@ -38,14 +40,26 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(
     initializeCacheName().then(() => {
       return caches.keys().then((cacheNames) => {
-        return Promise.all(
-          cacheNames
+        return Promise.all([
+          ...cacheNames
             .filter((name) => !name.endsWith(`-${CACHE_VERSION}`) && name !== CACHE_NAME)
             .map((name) => {
               console.log('Deleting old cache:', name);
               return caches.delete(name);
-            })
-        );
+            }),
+          caches.open(CACHE_NAME).then((cache) => {
+            return cache.keys().then((keys) => {
+              return Promise.all(
+                keys
+                  .filter((req) => {
+                    const path = new URL(req.url).pathname;
+                    return NEVER_CACHE.includes(path) || NEVER_CACHE.some(blacklisted => path.endsWith(blacklisted));
+                  })
+                  .map((req) => cache.delete(req))
+              );
+            });
+          }).catch(() => {})
+        ]);
       });
     })
   );
@@ -61,6 +75,11 @@ self.addEventListener('fetch', (event) => {
   }
 
   if (url.pathname.includes('/sw.js') || url.pathname.includes('/manifest.json')) {
+    return;
+  }
+
+  if (NEVER_CACHE.includes(url.pathname) || NEVER_CACHE.some(blacklisted => url.pathname.endsWith(blacklisted))) {
+    event.respondWith(fetch(request).catch(() => caches.match(request)));
     return;
   }
 
