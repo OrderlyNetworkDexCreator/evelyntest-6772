@@ -1,0 +1,11 @@
+{
+  "extend.tradingRewards.description": "تداول مع Orderly لكسب ORDER",
+  "extend.affiliate.tag": "استرداد 40%",
+  "extend.affiliate.description": "اكسب المزيد بصفتك شريكا تابعا لـ Orderly",
+  "extend.staking": "التخزين",
+  "extend.staking.description": "قم بتخزين ORDER/esORDER للحصول على VALOR",
+  "extend.swap": "تبديل",
+  "extend.tradingPoints.points": "النقاط",
+  "extend.tradingLeaderboard.leaderboard": "لوحة الصدارة",
+  "extend.tradingLeaderboard.campaigns": "الحملات"
+}

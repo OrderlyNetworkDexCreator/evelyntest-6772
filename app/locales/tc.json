@@ -1,0 +1,11 @@
+{
+  "extend.tradingRewards.description": "透過 Orderly 交易以賺取 ORDER",
+  "extend.affiliate.tag": "40% 返佣",
+  "extend.affiliate.description": "成為 Orderly 推廣夥伴，賺取更多收益",
+  "extend.staking": "質押",
+  "extend.staking.description": "質押 ORDER/esORDER 以獲得 VALOR",
+  "extend.swap": "兌換",
+  "extend.tradingPoints.points": "積分",
+  "extend.tradingLeaderboard.leaderboard": "排行榜",
+  "extend.tradingLeaderboard.campaigns": "活動"
+}

@@ -1,32 +1,19 @@
 import { ReactNode, useCallback, lazy, Suspense } from "react";
 import { OrderlyAppProvider } from "@orderly.network/react-app";
-import { useOrderlyConfig } from "@/utils/config";
 import type { NetworkId } from "@orderly.network/types";
-import {
-  LocaleProvider,
-  LocaleCode,
-  LocaleEnum,
-  defaultLanguages,
-  Resources,
-} from "@orderly.network/i18n";
-import { withBasePath } from "@/utils/base-path";
-import { getSEOConfig, getUserLanguage } from "@/utils/seo";
+import { DemoGraduationChecker } from "@/components/DemoGraduationChecker";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { useOrderlyConfig } from "@/utils/config";
 import {
   getRuntimeConfigBoolean,
   getRuntimeConfigArray,
   getRuntimeConfig,
 } from "@/utils/runtime-config";
 import { createSymbolDataAdapter } from "@/utils/symbol-filter";
-import { DemoGraduationChecker } from "@/components/DemoGraduationChecker";
-import { LoadingSpinner } from "@/components/LoadingSpinner";
 import ServiceDisclaimerDialog from "./ServiceDisclaimerDialog";
-import { ExtendLocaleMessages, extendMessages } from "@/i18n/extend";
-const NETWORK_ID_KEY = "orderly_network_id";
+import { OrderlyLocaleProvider } from "./orderlyLocaleProvider";
 
-//  preload extend messages to prevent the key name from being displayed when the language file is loaded slowly
-const resources: Resources<ExtendLocaleMessages> = {
-  [LocaleEnum.en]: extendMessages,
-};
+const NETWORK_ID_KEY = "orderly_network_id";
 
 const getNetworkId = (): NetworkId => {
   if (typeof window === "undefined") return "mainnet";
@@ -51,41 +38,11 @@ const setNetworkId = (networkId: NetworkId) => {
   }
 };
 
-const getAvailableLanguages = (): string[] => {
-  const languages = getRuntimeConfigArray("VITE_AVAILABLE_LANGUAGES");
-
-  return languages.length > 0 ? languages : ["en"];
-};
-
-const getDefaultLanguage = (): LocaleCode => {
-  const seoConfig = getSEOConfig();
-  const userLanguage = getUserLanguage();
-  const availableLanguages = getAvailableLanguages();
-
-  if (typeof window !== "undefined") {
-    const urlParams = new URLSearchParams(window.location.search);
-    const langParam = urlParams.get("lang");
-    if (langParam && availableLanguages.includes(langParam)) {
-      return langParam as LocaleCode;
-    }
-  }
-
-  if (seoConfig.language && availableLanguages.includes(seoConfig.language)) {
-    return seoConfig.language as LocaleCode;
-  }
-
-  if (availableLanguages.includes(userLanguage)) {
-    return userLanguage as LocaleCode;
-  }
-
-  return (availableLanguages[0] || "en") as LocaleCode;
-};
-
 const PrivyConnector = lazy(
-  () => import("@/components/orderlyProvider/privyConnector")
+  () => import("@/components/orderlyProvider/privyConnector"),
 );
 const WalletConnector = lazy(
-  () => import("@/components/orderlyProvider/walletConnector")
+  () => import("@/components/orderlyProvider/walletConnector"),
 );
 
 const OrderlyProvider = (props: { children: ReactNode }) => {
@@ -96,7 +53,7 @@ const OrderlyProvider = (props: { children: ReactNode }) => {
   const usePrivy = !!privyAppId;
 
   const parseChainIds = (
-    envVar: string | undefined
+    envVar: string | undefined,
   ): Array<{ id: number }> | undefined => {
     if (!envVar) return undefined;
     return envVar
@@ -108,7 +65,7 @@ const OrderlyProvider = (props: { children: ReactNode }) => {
   };
 
   const parseDefaultChain = (
-    envVar: string | undefined
+    envVar: string | undefined,
   ): { mainnet: { id: number } } | undefined => {
     if (!envVar) return undefined;
 
@@ -134,7 +91,7 @@ const OrderlyProvider = (props: { children: ReactNode }) => {
       : undefined;
 
   const defaultChain = parseDefaultChain(
-    getRuntimeConfig("VITE_DEFAULT_CHAIN")
+    getRuntimeConfig("VITE_DEFAULT_CHAIN"),
   );
 
   const dataAdapter = createSymbolDataAdapter();
@@ -154,39 +111,7 @@ const OrderlyProvider = (props: { children: ReactNode }) => {
         }, 100);
       }
     },
-    []
-  );
-
-  const onLanguageChanged = async (lang: LocaleCode) => {
-    if (typeof window !== "undefined") {
-      const url = new URL(window.location.href);
-      if (lang === LocaleEnum.en) {
-        url.searchParams.delete("lang");
-      } else {
-        url.searchParams.set("lang", lang);
-      }
-      window.history.replaceState({}, "", url.toString());
-    }
-  };
-
-  const loadPath = (lang: LocaleCode) => {
-    const availableLanguages = getAvailableLanguages();
-
-    if (!availableLanguages.includes(lang)) {
-      return [];
-    }
-
-    return [
-      withBasePath(`/locales/${lang}.json`),
-      withBasePath(`/locales/extend/${lang}.json`),
-    ];
-  };
-
-  const defaultLanguage = getDefaultLanguage();
-
-  const availableLanguages = getAvailableLanguages();
-  const filteredLanguages = defaultLanguages.filter((lang) =>
-    availableLanguages.includes(lang.localCode)
+    [],
   );
 
   const appProvider = (
@@ -202,7 +127,7 @@ const OrderlyProvider = (props: { children: ReactNode }) => {
       dataAdapter={dataAdapter}
       restrictedInfo={{
         customRestrictedRegions: getRuntimeConfigArray(
-          "VITE_RESTRICTED_REGIONS"
+          "VITE_RESTRICTED_REGIONS",
         ),
       }}
     >
@@ -219,15 +144,9 @@ const OrderlyProvider = (props: { children: ReactNode }) => {
   );
 
   return (
-    <LocaleProvider
-      onLanguageChanged={onLanguageChanged}
-      backend={{ loadPath }}
-      resources={resources}
-      locale={defaultLanguage}
-      languages={filteredLanguages}
-    >
+    <OrderlyLocaleProvider>
       <Suspense fallback={<LoadingSpinner />}>{walletConnector}</Suspense>
-    </LocaleProvider>
+    </OrderlyLocaleProvider>
   );
 };
 

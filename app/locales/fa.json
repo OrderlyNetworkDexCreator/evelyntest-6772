@@ -1,0 +1,11 @@
+{
+  "extend.tradingRewards.description": "با Orderly معامله کنید و ORDER کسب کنید",
+  "extend.affiliate.tag": "۴۰٪ بازپرداخت",
+  "extend.affiliate.description": "به عنوان همکار وابسته Orderly درآمد بیشتری کسب کنید",
+  "extend.staking": "استیکینگ",
+  "extend.staking.description": "ORDER/esORDER را استیک کنید تا VALOR به دست آورید",
+  "extend.swap": "تبادل",
+  "extend.tradingPoints.points": "امتیازها",
+  "extend.tradingLeaderboard.leaderboard": "جدول رتبه بندی",
+  "extend.tradingLeaderboard.campaigns": "کمپین ها"
+}

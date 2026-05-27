@@ -2595,30 +2595,30 @@
   resolved "https://registry.npmjs.org/@nolyfill/is-core-module/-/is-core-module-1.0.39.tgz"
   integrity sha512-nn5ozdjYQpUCZlWGuxcJY/KpxkWQs4DcbMCmKojjyrYDEAGy4Ce19NN4v5MduafTwJlbKc99UA8YhSVqq9yPZA==
 
-"@orderly.network/affiliate@3.0.4":
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/@orderly.network/affiliate/-/affiliate-3.0.4.tgz#4473a61b8ab31a95ad33e6777c75b6d07a7d348e"
-  integrity sha512-Mg4WC57t6EaOT37esydHjxzjGf5Vz07miZCZRi3WJnQQ9BUSgCbd7wO48r5NqtJPxHljWeZaMy+fSSNU8BgwTw==
+"@orderly.network/affiliate@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@orderly.network/affiliate/-/affiliate-3.1.0.tgz#4111a5345147cf11ff4393016150c0b71e1d0521"
+  integrity sha512-SKDLQ1v7FNC4X9GJqxgDG148/8VaSbNoPv6j6UmkllWCIrKEZ833UIQs3uC7kf2/C5+nScOJ8aD1FxYGHWNtOg==
   dependencies:
-    "@orderly.network/chart" "3.0.4"
-    "@orderly.network/hooks" "3.0.4"
-    "@orderly.network/i18n" "3.0.4"
-    "@orderly.network/react-app" "3.0.4"
-    "@orderly.network/types" "3.0.4"
-    "@orderly.network/ui" "3.0.4"
-    "@orderly.network/ui-connector" "3.0.4"
-    "@orderly.network/ui-scaffold" "3.0.4"
-    "@orderly.network/utils" "3.0.4"
+    "@orderly.network/chart" "3.1.0"
+    "@orderly.network/hooks" "3.1.0"
+    "@orderly.network/i18n" "3.1.0"
+    "@orderly.network/react-app" "3.1.0"
+    "@orderly.network/types" "3.1.0"
+    "@orderly.network/ui" "3.1.0"
+    "@orderly.network/ui-connector" "3.1.0"
+    "@orderly.network/ui-scaffold" "3.1.0"
+    "@orderly.network/utils" "3.1.0"
     date-fns "^3.6.0"
 
-"@orderly.network/chart@3.0.4":
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/@orderly.network/chart/-/chart-3.0.4.tgz#60a1e2f1c2d32784a097a0b29a9bed88f41d66ba"
-  integrity sha512-NBGTlZwWUBGOWBvN9aB713/b3RfPlX9SVb3b5MlXLw40WWPsRZoyxyoF5HA6LJweF7H9Y3uj5GbsFAio4qQNYg==
+"@orderly.network/chart@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@orderly.network/chart/-/chart-3.1.0.tgz#a5ab6045ba1a60ca768c004e2310c714bb456be7"
+  integrity sha512-GjX0udkP0YhAImFh5tCRVW3Cr7Q0y6rwSfXKfCbbhaBgdtaHi7D0nNAFCKsnh9MK7OOTvhY0VUhFof70SclvnQ==
   dependencies:
-    "@orderly.network/i18n" "3.0.4"
-    "@orderly.network/ui" "3.0.4"
-    "@orderly.network/utils" "3.0.4"
+    "@orderly.network/i18n" "3.1.0"
+    "@orderly.network/ui" "3.1.0"
+    "@orderly.network/utils" "3.1.0"
     d3-array "^3.2.4"
     d3-axis "^3.0.0"
     d3-scale "^4.0.2"
@@ -2626,13 +2626,13 @@
     d3-shape "^3.2.0"
     recharts "^2.12.7"
 
-"@orderly.network/core@3.0.4":
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/@orderly.network/core/-/core-3.0.4.tgz#a636c82c76ed91e85d706bc472382ed432d3e33c"
-  integrity sha512-sKb5mHLQReUwtK6x9Q0HqDs9GydG8KnFew3VWjR5PbDXrUgDSpqEK48OAuKQittvHJOWL96/oRjQ5+nNL7PIMw==
+"@orderly.network/core@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@orderly.network/core/-/core-3.1.0.tgz#3e187a93aae7b2224977995dd951dc802a7c3c18"
+  integrity sha512-CxoSpmJ4o+b3LtyccZm8j4EHhaaQYt2Oi+elCZypqU7ZCQFMhAI9n2u8f6g9pwpAXi7/P3ArkTUeKD2NIYzCqA==
   dependencies:
     "@noble/ed25519" "^2.0.0"
-    "@orderly.network/types" "3.0.4"
+    "@orderly.network/types" "3.1.0"
     "@solana/web3.js" "^1.95.3"
     bs58 "^5.0.0"
     ethers "^6.16.0"
@@ -2640,27 +2640,27 @@
     eventemitter3 "^5.0.1"
     lodash.merge "^4.6.2"
 
-"@orderly.network/default-evm-adapter@3.0.4":
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/@orderly.network/default-evm-adapter/-/default-evm-adapter-3.0.4.tgz#4bc495a094bcd4bc98bd9e0d2c94decafeb7ffed"
-  integrity sha512-Ze5dSJn4Ik6FbhiA6HC3vX3Yf9toMEAwXdolLOlAZdVHcyEz5c3/D6lM2pLrXUCDeRG10kAjuR00a8LTqzrYTw==
+"@orderly.network/default-evm-adapter@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@orderly.network/default-evm-adapter/-/default-evm-adapter-3.1.0.tgz#9c7e712d0408d8eb503ba756916df88d06bdafac"
+  integrity sha512-amwoSQnNocdZfjVSRwpLv5XAJC3FO5up7QmpYCZDdBCQcks0+4x9z55Oa2EOi8IzXCBFqssJnmgkfdxOr7OR+Q==
   dependencies:
     "@noble/ed25519" "^2.0.0"
-    "@orderly.network/core" "3.0.4"
-    "@orderly.network/types" "3.0.4"
+    "@orderly.network/core" "3.1.0"
+    "@orderly.network/types" "3.1.0"
     bs58 "^5.0.0"
 
-"@orderly.network/default-solana-adapter@3.0.4":
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/@orderly.network/default-solana-adapter/-/default-solana-adapter-3.0.4.tgz#0629f080b811c644c0643e3bf789efdaacca1d31"
-  integrity sha512-y0fJhxvOue/lC7Lv/OHCiiN9SaSosdMjnfAjsciCOhC/ex25Ogb5Knd8i3LTnvcEyooAPKqkzncxYq/8YRWXmw==
+"@orderly.network/default-solana-adapter@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@orderly.network/default-solana-adapter/-/default-solana-adapter-3.1.0.tgz#e6b6787a905789d5f33d6ecc66e663b2d2b30848"
+  integrity sha512-/lodGXtCoxI5qahN4/tNrdo8WqXaUtNflqSXMdpAp/9U77ARe5Ca+HKAOSFEbKnrOwZVLboE3skw1fTP+i43Tg==
   dependencies:
     "@coral-xyz/anchor" "0.29.0"
     "@layerzerolabs/lz-solana-sdk-v2" "2.3.45-oft-rc.0"
     "@layerzerolabs/lz-v2-utilities" "2.3.45-oft-rc.0"
     "@noble/ed25519" "^2.0.0"
-    "@orderly.network/core" "3.0.4"
-    "@orderly.network/types" "3.0.4"
+    "@orderly.network/core" "3.1.0"
+    "@orderly.network/types" "3.1.0"
     "@solana/spl-token" "0.4.8"
     "@solana/wallet-adapter-base" "0.9.23"
     "@solana/web3.js" "^1.95.3"
@@ -2668,22 +2668,22 @@
     ethereum-cryptography "2.2.1"
     ethers "^6.16.0"
 
-"@orderly.network/hooks@3.0.4":
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/@orderly.network/hooks/-/hooks-3.0.4.tgz#1176f928afc9c892fe7902ac84dc175dd95d75cd"
-  integrity sha512-YJMsFyF3tkr/QEHBFs6gibigpJYFD9d9nOpgZlupHDxpJzB3TxNAl2U3aB/c9Ej7WdeglL36z3fu9HFqXgpNrg==
+"@orderly.network/hooks@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@orderly.network/hooks/-/hooks-3.1.0.tgz#606d7a795e7463fb64aa8ad135488f230829576d"
+  integrity sha512-/hj+aC3i938frcy60EdppTpgL7e8Th7XbKRx5133mSrqnPlnfClg/gFEOQBD6tajAXFlybD2K367fDDhsD6DkQ==
   dependencies:
     "@akamfoad/qr" "^0.4.0"
     "@amplitude/analytics-browser" "2.11.13"
-    "@orderly.network/core" "3.0.4"
-    "@orderly.network/default-evm-adapter" "3.0.4"
-    "@orderly.network/default-solana-adapter" "3.0.4"
-    "@orderly.network/net" "3.0.4"
-    "@orderly.network/perp" "5.0.4"
-    "@orderly.network/plugin-core" "3.0.4"
-    "@orderly.network/types" "3.0.4"
-    "@orderly.network/utils" "3.0.4"
-    "@orderly.network/web3-provider-ethers" "3.0.4"
+    "@orderly.network/core" "3.1.0"
+    "@orderly.network/default-evm-adapter" "3.1.0"
+    "@orderly.network/default-solana-adapter" "3.1.0"
+    "@orderly.network/net" "3.1.0"
+    "@orderly.network/perp" "5.1.0"
+    "@orderly.network/plugin-core" "3.1.0"
+    "@orderly.network/types" "3.1.0"
+    "@orderly.network/utils" "3.1.0"
+    "@orderly.network/web3-provider-ethers" "3.1.0"
     immer "^10.1.1"
     lodash "^4.17.21"
     ramda "^0.29.0"
@@ -2692,10 +2692,10 @@
     use-debounce "^9.0.4"
     zustand "^4.5.5"
 
-"@orderly.network/i18n@3.0.4":
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/@orderly.network/i18n/-/i18n-3.0.4.tgz#097b1bf37365c59268c1b02eb70066d5494ae885"
-  integrity sha512-e+DYJuzztF7pDcwS21oGzDTs1xFZK5HY6DQs03I2MPKIK787WjE0xqOPLO5dVcBRrDqVnmXjIQSc41b0nUPPZA==
+"@orderly.network/i18n@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@orderly.network/i18n/-/i18n-3.1.0.tgz#53536f6b80df2a351c597297125e398be9e83aa8"
+  integrity sha512-hjcXrKvIaWIw7HhDUyQ9fZQgrWw6imd4hDAsrRAf2l0Y3I7FQekLRuXhNzLS0hjLYfbYzzrimL4wzmh2fioM+w==
   dependencies:
     fs-extra "^11.2.0"
     i18next "^24.2.2"
@@ -2703,94 +2703,94 @@
     react-i18next "^15.4.1"
     yargs "^17.7.2"
 
-"@orderly.network/markets@3.0.4":
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/@orderly.network/markets/-/markets-3.0.4.tgz#6802dcc850bed4abcdf8076c6e70fe62bcd0bec3"
-  integrity sha512-XdaRh/k0PWdWM0bJHvpjXFxLr/dPgP2d2Yg12ShUE/7aEkYfeAQ8P8HfY4twuu1KC5q8/ShL1gPgz9LsAQDcag==
+"@orderly.network/markets@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@orderly.network/markets/-/markets-3.1.0.tgz#d32019564bc5651a0228c13e58e43854cae38653"
+  integrity sha512-jERk01O/GjyXasBrPV/Av175JlIVPbzXx5hmN9EDvI4FmJfJWvVnsx/iTUJkg6lEf2fr15BoU6uiTv3jOQIFAQ==
   dependencies:
-    "@orderly.network/hooks" "3.0.4"
-    "@orderly.network/i18n" "3.0.4"
-    "@orderly.network/types" "3.0.4"
-    "@orderly.network/ui" "3.0.4"
-    "@orderly.network/ui-scaffold" "3.0.4"
-    "@orderly.network/utils" "3.0.4"
+    "@orderly.network/hooks" "3.1.0"
+    "@orderly.network/i18n" "3.1.0"
+    "@orderly.network/types" "3.1.0"
+    "@orderly.network/ui" "3.1.0"
+    "@orderly.network/ui-scaffold" "3.1.0"
+    "@orderly.network/utils" "3.1.0"
     ramda "^0.31.3"
 
-"@orderly.network/net@3.0.4":
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/@orderly.network/net/-/net-3.0.4.tgz#b71a530f89a10fab8e29574fc99798817353add9"
-  integrity sha512-RDWmvd7jdxk+UYtzyFSrsj0xWCmf4gO5iR/w62FMMqwmhQsCeZj4N3M40q440qm+M4gsWKRMllaU56/AdC1ESA==
+"@orderly.network/net@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@orderly.network/net/-/net-3.1.0.tgz#783ca11a539b30b5af72a94da0e4e69a69adff4e"
+  integrity sha512-3ioiW1lz/q4a1Tpm8CdLmZEY8uEOsWgtpdw7Tzxu6kpbut/s93j4J6Ct6yOGchunYJ1bGlxJntf1bnP9SQGuBw==
   dependencies:
     eventemitter3 "^5.0.1"
 
-"@orderly.network/perp@5.0.4":
-  version "5.0.4"
-  resolved "https://registry.yarnpkg.com/@orderly.network/perp/-/perp-5.0.4.tgz#babbc56e5d2f1486b6bf028fe557d7b7c0585763"
-  integrity sha512-d+R/KxYNl156CdajPXIOAt/28mwlSKN4ax8QWjkSH+hScHCYAVByRxJcY+Qtts5POq6O1cBJH5aZTbIDYVCMNQ==
+"@orderly.network/perp@5.1.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@orderly.network/perp/-/perp-5.1.0.tgz#f0e1d9cc66174759779facce8016ca1d2d96e731"
+  integrity sha512-PeWaPdwNflhumWHms/RnnwsloHBO0ICTLP555fXhiRH56Ka9Y4p7nr+TMekpESeCJJrkr0vk/MeyfkUx5RE7hg==
   dependencies:
-    "@orderly.network/types" "3.0.4"
-    "@orderly.network/utils" "3.0.4"
+    "@orderly.network/types" "3.1.0"
+    "@orderly.network/utils" "3.1.0"
 
-"@orderly.network/plugin-core@3.0.4":
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/@orderly.network/plugin-core/-/plugin-core-3.0.4.tgz#b89fe949fc9d43444d97e58ad831bdef69bebf94"
-  integrity sha512-pzpDJsnWvCL9zabxXxYp/dMh57OMKdSdXBoCB6RmK51IXeOO7BfrwY6U+B03eVRVm7BcH/6sM1Qs7de8Vp9N+g==
+"@orderly.network/plugin-core@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@orderly.network/plugin-core/-/plugin-core-3.1.0.tgz#63ec50e4939ec6e57a63857c0cd1980a42c8d8a4"
+  integrity sha512-qgkAxxUQKFn0D6xF9qUkX1D1J/XabAWh0htULnXrbBqAqmRXfdD1zjiipFCdqwGN2nl/mZ3gC2ghuam1GI836A==
   dependencies:
-    "@orderly.network/core" "3.0.4"
-    "@orderly.network/types" "3.0.4"
-    "@orderly.network/utils" "3.0.4"
+    "@orderly.network/core" "3.1.0"
+    "@orderly.network/types" "3.1.0"
+    "@orderly.network/utils" "3.1.0"
     react-error-boundary "^4.0.13"
 
-"@orderly.network/portfolio@3.0.4":
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/@orderly.network/portfolio/-/portfolio-3.0.4.tgz#d128aa85221beb076df964a93b8c7c4e18563d31"
-  integrity sha512-CCwiQcrywFyZ7fYTX0evQdwWpJRgY++VjP05nj0yE/9IQIyrlxGtcp3taQOuWL5J4/OX1yFqoywUPob5z4JFYg==
+"@orderly.network/portfolio@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@orderly.network/portfolio/-/portfolio-3.1.0.tgz#b5288f650f07f07d203518dba436ff5726e5d467"
+  integrity sha512-B3QNsxtjWkTQKtPdWbO/Xdg1U4xxpklurqjBef12lKBIzbPzzw3UNWdSgUwdwNxb89u1s3/1tzFW6tDsYxU9BQ==
   dependencies:
-    "@orderly.network/chart" "3.0.4"
-    "@orderly.network/hooks" "3.0.4"
-    "@orderly.network/i18n" "3.0.4"
-    "@orderly.network/perp" "5.0.4"
-    "@orderly.network/react-app" "3.0.4"
-    "@orderly.network/types" "3.0.4"
-    "@orderly.network/ui" "3.0.4"
-    "@orderly.network/ui-chain-selector" "3.0.4"
-    "@orderly.network/ui-connector" "3.0.4"
-    "@orderly.network/ui-leverage" "3.0.4"
-    "@orderly.network/ui-orders" "3.0.4"
-    "@orderly.network/ui-positions" "3.0.4"
-    "@orderly.network/ui-scaffold" "3.0.4"
-    "@orderly.network/ui-share" "3.0.4"
-    "@orderly.network/ui-transfer" "3.0.4"
-    "@orderly.network/utils" "3.0.4"
+    "@orderly.network/chart" "3.1.0"
+    "@orderly.network/hooks" "3.1.0"
+    "@orderly.network/i18n" "3.1.0"
+    "@orderly.network/perp" "5.1.0"
+    "@orderly.network/react-app" "3.1.0"
+    "@orderly.network/types" "3.1.0"
+    "@orderly.network/ui" "3.1.0"
+    "@orderly.network/ui-chain-selector" "3.1.0"
+    "@orderly.network/ui-connector" "3.1.0"
+    "@orderly.network/ui-leverage" "3.1.0"
+    "@orderly.network/ui-orders" "3.1.0"
+    "@orderly.network/ui-positions" "3.1.0"
+    "@orderly.network/ui-scaffold" "3.1.0"
+    "@orderly.network/ui-share" "3.1.0"
+    "@orderly.network/ui-transfer" "3.1.0"
+    "@orderly.network/utils" "3.1.0"
     date-fns "^3.6.0"
     immer "^10.1.1"
     lodash "^4.17.21"
     ramda "^0.29.0"
 
-"@orderly.network/react-app@3.0.4":
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/@orderly.network/react-app/-/react-app-3.0.4.tgz#65e0914f58d8b7cd08642c9eb2b7a410f4d33fca"
-  integrity sha512-H7lOgRaYQRY6rxOVjbRqBYTNqk/8mQKSlRtj+yuf9e0MPpiNVnnXS70XzD2jJc0mc9Ykw6BrcpH4oVrIxOQxKw==
+"@orderly.network/react-app@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@orderly.network/react-app/-/react-app-3.1.0.tgz#7d6488b53d54ae3ed1897853a1d6f05e35ef0ce5"
+  integrity sha512-WbhONVMXeaIP4t34tCYcrduu4nhUsDYbSCM5RfvAc02n31JAjjsI1rD6qF4Xf6VLkFxFxw8ofnrvMA9NOvJKMQ==
   dependencies:
-    "@orderly.network/hooks" "3.0.4"
-    "@orderly.network/i18n" "3.0.4"
-    "@orderly.network/types" "3.0.4"
-    "@orderly.network/ui" "3.0.4"
-    "@orderly.network/utils" "3.0.4"
+    "@orderly.network/hooks" "3.1.0"
+    "@orderly.network/i18n" "3.1.0"
+    "@orderly.network/types" "3.1.0"
+    "@orderly.network/ui" "3.1.0"
+    "@orderly.network/utils" "3.1.0"
     date-fns "^3.6.0"
 
-"@orderly.network/trading-leaderboard@3.0.4":
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/@orderly.network/trading-leaderboard/-/trading-leaderboard-3.0.4.tgz#ce3a5cc4a225e3945a71d838648ce2708c72c68a"
-  integrity sha512-PeJftTcGSegxBoDFK5Zmy90kVNzb7bh6ylmoqlEGZ2Lft3t22LprB3X0M2l67wO5LJVes2EpEEMy4Gwl3A0Sqg==
+"@orderly.network/trading-leaderboard@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@orderly.network/trading-leaderboard/-/trading-leaderboard-3.1.0.tgz#16dcef5bbbb789b1cd2b6f6135e88fa4c98f27f0"
+  integrity sha512-pl2YbZsh1O8NiSnAoSPsQKOZ/UxZKoX7WgvoqmEcZv5ewiU7HfBLvvbMu5KRfbAGSdUkOqlk6TQmPK9L+n5Nhw==
   dependencies:
-    "@orderly.network/hooks" "3.0.4"
-    "@orderly.network/i18n" "3.0.4"
-    "@orderly.network/react-app" "3.0.4"
-    "@orderly.network/types" "3.0.4"
-    "@orderly.network/ui" "3.0.4"
-    "@orderly.network/ui-connector" "3.0.4"
-    "@orderly.network/utils" "3.0.4"
+    "@orderly.network/hooks" "3.1.0"
+    "@orderly.network/i18n" "3.1.0"
+    "@orderly.network/react-app" "3.1.0"
+    "@orderly.network/types" "3.1.0"
+    "@orderly.network/ui" "3.1.0"
+    "@orderly.network/ui-connector" "3.1.0"
+    "@orderly.network/utils" "3.1.0"
     date-fns "^3.6.0"
     ramda "^0.29.0"
 
@@ -2802,239 +2802,239 @@
     date-fns "^3.6.0"
     ramda "^0.29.0"
 
-"@orderly.network/trading@3.0.4":
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/@orderly.network/trading/-/trading-3.0.4.tgz#7366f5d7d8d36a5428fbd5a58f5a17c84139f20e"
-  integrity sha512-uhdAk3swtcHc3itA60ozKAlMdtvYKXKqpsRWxS9qzbaAiDCIbLabtihG4Xg/Pbqebs9fqpiqj9YTt5ROVZK8QQ==
+"@orderly.network/trading@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@orderly.network/trading/-/trading-3.1.0.tgz#39259fba1b73185bc3dfd76ff994d3a122b3d3b6"
+  integrity sha512-d133MdFuykTnzF4fWNkjdt/UiaweWONJ0hFvsSW/grmOcTicSoa4H3QLKu+htgYQrv1uiRIRd6cakwuRSEYqdQ==
   dependencies:
     "@dnd-kit/core" "^6.3.1"
     "@dnd-kit/modifiers" "^9.0.0"
     "@dnd-kit/sortable" "^10.0.0"
     "@dnd-kit/utilities" "^3.2.2"
-    "@orderly.network/hooks" "3.0.4"
-    "@orderly.network/i18n" "3.0.4"
-    "@orderly.network/markets" "3.0.4"
-    "@orderly.network/portfolio" "3.0.4"
-    "@orderly.network/react-app" "3.0.4"
-    "@orderly.network/types" "3.0.4"
-    "@orderly.network/ui" "3.0.4"
-    "@orderly.network/ui-chain-selector" "3.0.4"
-    "@orderly.network/ui-connector" "3.0.4"
-    "@orderly.network/ui-leverage" "3.0.4"
-    "@orderly.network/ui-order-entry" "3.0.4"
-    "@orderly.network/ui-orders" "3.0.4"
-    "@orderly.network/ui-positions" "3.0.4"
-    "@orderly.network/ui-scaffold" "3.0.4"
-    "@orderly.network/ui-share" "3.0.4"
-    "@orderly.network/ui-tradingview" "3.0.4"
-    "@orderly.network/ui-transfer" "3.0.4"
-    "@orderly.network/utils" "3.0.4"
+    "@orderly.network/hooks" "3.1.0"
+    "@orderly.network/i18n" "3.1.0"
+    "@orderly.network/markets" "3.1.0"
+    "@orderly.network/portfolio" "3.1.0"
+    "@orderly.network/react-app" "3.1.0"
+    "@orderly.network/types" "3.1.0"
+    "@orderly.network/ui" "3.1.0"
+    "@orderly.network/ui-chain-selector" "3.1.0"
+    "@orderly.network/ui-connector" "3.1.0"
+    "@orderly.network/ui-leverage" "3.1.0"
+    "@orderly.network/ui-order-entry" "3.1.0"
+    "@orderly.network/ui-orders" "3.1.0"
+    "@orderly.network/ui-positions" "3.1.0"
+    "@orderly.network/ui-scaffold" "3.1.0"
+    "@orderly.network/ui-share" "3.1.0"
+    "@orderly.network/ui-tradingview" "3.1.0"
+    "@orderly.network/ui-transfer" "3.1.0"
+    "@orderly.network/utils" "3.1.0"
     "@uiw/react-split" "^5.9.3"
 
-"@orderly.network/types@3.0.4":
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/@orderly.network/types/-/types-3.0.4.tgz#b0211df7a8b875c4581c21fe2c530ae06310e7ab"
-  integrity sha512-avNfkh8dNj71xHdN1ekAXjr8Zz6ktNQL9ZTq3mXiqaZ5ds6CtZJNOmvpFTZiuI9YQbjGMCCh8accSYtKzY7q5w==
+"@orderly.network/types@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@orderly.network/types/-/types-3.1.0.tgz#0178bffef095895b454a794592bee64d80f159b5"
+  integrity sha512-oaUIRjG8bLgBI63fpBr6+2Zl3cNm4BxI4bBhh6VHwJ4I3bewJ9ijY31d/RDTjbAsFgcvyr50uPyw1LsT8JAuqw==
   dependencies:
     superstruct "^2.0.2"
 
-"@orderly.network/ui-chain-selector@3.0.4":
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/@orderly.network/ui-chain-selector/-/ui-chain-selector-3.0.4.tgz#d963166f41c66a1f043faeddc471cfd26ac87764"
-  integrity sha512-nVECSjeJsbkhJPxntj0coL3LQb5Qj5S2mKUtDzHimqV71Xyi3kBBeVU6OD/Gl/9vAn5Afaq6BqXae1ytxqTaZQ==
+"@orderly.network/ui-chain-selector@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@orderly.network/ui-chain-selector/-/ui-chain-selector-3.1.0.tgz#9494d2f222d4afef0a8f5e129bd4f2a34ec8fa57"
+  integrity sha512-mOil57Ps11vy0gRIyBDV4Qz8dKqDRl4VFn0f3ak0NBwaI3qaZfQgAV9xlfoBN5MABfcMwqygzhYYBY9J6IKdAg==
   dependencies:
-    "@orderly.network/hooks" "3.0.4"
-    "@orderly.network/i18n" "3.0.4"
-    "@orderly.network/react-app" "3.0.4"
-    "@orderly.network/types" "3.0.4"
-    "@orderly.network/ui" "3.0.4"
+    "@orderly.network/hooks" "3.1.0"
+    "@orderly.network/i18n" "3.1.0"
+    "@orderly.network/react-app" "3.1.0"
+    "@orderly.network/types" "3.1.0"
+    "@orderly.network/ui" "3.1.0"
 
-"@orderly.network/ui-connector@3.0.4":
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/@orderly.network/ui-connector/-/ui-connector-3.0.4.tgz#4a70ee5a6688c23e43a6c302b643841dc411c2ac"
-  integrity sha512-J+twfKxf0lL1v6tsQiFWYDvhN1Kl/6iFvDIDgvYFIPrxBAM9pbDRvTtBz2txB9PsAXFFMJWsu71TOucXZToV8g==
+"@orderly.network/ui-connector@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@orderly.network/ui-connector/-/ui-connector-3.1.0.tgz#2141c69b8f080cd48f1dc08cc6e4d802f4e3ff69"
+  integrity sha512-I5brke6hQrDC6HN6RKDOEKokN8S2OLSto8JqGCDxu3/i2HTIbX7/0v8/qjJttJ26svI7yT1eiv0B4NCFle6+Cw==
   dependencies:
-    "@orderly.network/hooks" "3.0.4"
-    "@orderly.network/i18n" "3.0.4"
-    "@orderly.network/react-app" "3.0.4"
-    "@orderly.network/types" "3.0.4"
-    "@orderly.network/ui" "3.0.4"
-    "@orderly.network/ui-chain-selector" "3.0.4"
+    "@orderly.network/hooks" "3.1.0"
+    "@orderly.network/i18n" "3.1.0"
+    "@orderly.network/react-app" "3.1.0"
+    "@orderly.network/types" "3.1.0"
+    "@orderly.network/ui" "3.1.0"
+    "@orderly.network/ui-chain-selector" "3.1.0"
 
-"@orderly.network/ui-leverage@3.0.4":
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/@orderly.network/ui-leverage/-/ui-leverage-3.0.4.tgz#2927aaa7f2671ec16ce1790ac8ce209139d0238a"
-  integrity sha512-AlMDYOqB4Z80cH8Y6WnQ7WZC6Q7Ja3LksYlwYXh2FThvCu3jtiPcSX/DLvV5EYDn9wPQGHKRTpCHdkjfI46jfA==
+"@orderly.network/ui-leverage@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@orderly.network/ui-leverage/-/ui-leverage-3.1.0.tgz#f055047872439f8c6ce82774ecbd7d1ba607c617"
+  integrity sha512-6mLIm7YBC35YNb4eirnZZbvtoWGPR3MVjbR2tgwHJZzW5VC4fGKmmt72OKj2Fyb2EK1PkZkBhoQantCY8EyoTw==
   dependencies:
-    "@orderly.network/hooks" "3.0.4"
-    "@orderly.network/i18n" "3.0.4"
-    "@orderly.network/perp" "5.0.4"
-    "@orderly.network/types" "3.0.4"
-    "@orderly.network/ui" "3.0.4"
-    "@orderly.network/utils" "3.0.4"
+    "@orderly.network/hooks" "3.1.0"
+    "@orderly.network/i18n" "3.1.0"
+    "@orderly.network/perp" "5.1.0"
+    "@orderly.network/types" "3.1.0"
+    "@orderly.network/ui" "3.1.0"
+    "@orderly.network/utils" "3.1.0"
 
-"@orderly.network/ui-notification@3.0.4":
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/@orderly.network/ui-notification/-/ui-notification-3.0.4.tgz#427cbc0d0b265a9042fb6a56113849429a7d6efe"
-  integrity sha512-EUvVFa+5g8YtbIBw6YhazHWb8luh/OqSVsTGWZGsgkfhXxO60aB6TFe6mIu52qh3OIVaWpIRO5ndxMXt3iHjCA==
+"@orderly.network/ui-notification@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@orderly.network/ui-notification/-/ui-notification-3.1.0.tgz#086e06443eb44781c990431ea961a31888c733b9"
+  integrity sha512-UQFnUtUZyGhOvaEWxnQw0jFnG6LbvY/avcUDYDuPztJ6KweK6R8l1C/E7SNb2mKGuJZqxYyvUkO7eLsur6Neew==
   dependencies:
     "@date-fns/utc" "1.2.0"
-    "@orderly.network/hooks" "3.0.4"
-    "@orderly.network/i18n" "3.0.4"
-    "@orderly.network/react-app" "3.0.4"
-    "@orderly.network/types" "3.0.4"
-    "@orderly.network/ui" "3.0.4"
-    "@orderly.network/utils" "3.0.4"
+    "@orderly.network/hooks" "3.1.0"
+    "@orderly.network/i18n" "3.1.0"
+    "@orderly.network/react-app" "3.1.0"
+    "@orderly.network/types" "3.1.0"
+    "@orderly.network/ui" "3.1.0"
+    "@orderly.network/utils" "3.1.0"
     date-fns "^3.6.0"
     immer "^10.1.1"
 
-"@orderly.network/ui-order-entry@3.0.4":
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/@orderly.network/ui-order-entry/-/ui-order-entry-3.0.4.tgz#4f6707a3fa9e026868829ec79ef9235d302f9c99"
-  integrity sha512-JkBCLxV8OOIBW2lQn1q1acL1bydW1V2b4VvHnsDB8h0ZFlyOv1IDhPiM1AnaWZjy1KsHFKVtkUsIbMElL5HHEA==
+"@orderly.network/ui-order-entry@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@orderly.network/ui-order-entry/-/ui-order-entry-3.1.0.tgz#4e2ba49883ae892d9ce457bfce69985f383efc8d"
+  integrity sha512-ONBU8sPC67IZxZ+KhyeGwdGaP8RwpAppZh96XnZsoQJheX0WoXoEF3dEyWNnxoH+h9xXfbCvLKCkDr5vSWzS2A==
   dependencies:
-    "@orderly.network/hooks" "3.0.4"
-    "@orderly.network/i18n" "3.0.4"
-    "@orderly.network/perp" "5.0.4"
-    "@orderly.network/react-app" "3.0.4"
-    "@orderly.network/types" "3.0.4"
-    "@orderly.network/ui" "3.0.4"
-    "@orderly.network/ui-connector" "3.0.4"
-    "@orderly.network/ui-leverage" "3.0.4"
-    "@orderly.network/ui-scaffold" "3.0.4"
-    "@orderly.network/ui-tpsl" "3.0.4"
-    "@orderly.network/utils" "3.0.4"
+    "@orderly.network/hooks" "3.1.0"
+    "@orderly.network/i18n" "3.1.0"
+    "@orderly.network/perp" "5.1.0"
+    "@orderly.network/react-app" "3.1.0"
+    "@orderly.network/types" "3.1.0"
+    "@orderly.network/ui" "3.1.0"
+    "@orderly.network/ui-connector" "3.1.0"
+    "@orderly.network/ui-leverage" "3.1.0"
+    "@orderly.network/ui-scaffold" "3.1.0"
+    "@orderly.network/ui-tpsl" "3.1.0"
+    "@orderly.network/utils" "3.1.0"
     ramda "^0.31.3"
 
-"@orderly.network/ui-orders@3.0.4":
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/@orderly.network/ui-orders/-/ui-orders-3.0.4.tgz#a1aceb4c1972bf5023c2e5480dd91a87fb6bd063"
-  integrity sha512-h/BJdldATxXzqcRDxIee1qBt1CyyNKmMl7uEZ0WtLlzYg2Nc63/MlHqj8nyK+3bF+343fnvygo0A0YFkEFEhuA==
+"@orderly.network/ui-orders@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@orderly.network/ui-orders/-/ui-orders-3.1.0.tgz#8ba07083ae13aeaeb227af42b5532626d808aea5"
+  integrity sha512-y1unMD+ic715WAn6xyO08EqigV8HNHjES9pdatiXgVwQHWwXps668LO+XN25ovXJ5veSrylMEoD6ml3cEyschg==
   dependencies:
-    "@orderly.network/hooks" "3.0.4"
-    "@orderly.network/i18n" "3.0.4"
-    "@orderly.network/react-app" "3.0.4"
-    "@orderly.network/types" "3.0.4"
-    "@orderly.network/ui" "3.0.4"
-    "@orderly.network/ui-connector" "3.0.4"
-    "@orderly.network/ui-share" "3.0.4"
-    "@orderly.network/ui-tpsl" "3.0.4"
-    "@orderly.network/utils" "3.0.4"
+    "@orderly.network/hooks" "3.1.0"
+    "@orderly.network/i18n" "3.1.0"
+    "@orderly.network/react-app" "3.1.0"
+    "@orderly.network/types" "3.1.0"
+    "@orderly.network/ui" "3.1.0"
+    "@orderly.network/ui-connector" "3.1.0"
+    "@orderly.network/ui-share" "3.1.0"
+    "@orderly.network/ui-tpsl" "3.1.0"
+    "@orderly.network/utils" "3.1.0"
     date-fns "^3.6.0"
 
-"@orderly.network/ui-positions@3.0.4":
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/@orderly.network/ui-positions/-/ui-positions-3.0.4.tgz#af512208c2f832aea7e79262d7e513ad54c02653"
-  integrity sha512-odD6oRv0oadZlFaqdVy6m1smHbn+LbhGOClAK4ZNRhmw81xp5QlavifnOmP+rHo+6NYqy6HkoM1Pup+DRTXepw==
+"@orderly.network/ui-positions@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@orderly.network/ui-positions/-/ui-positions-3.1.0.tgz#5c6420786bc1392ae87a8377e1342552a824dc93"
+  integrity sha512-WxEZIYmqY4pQGwZUM1annfep/Aeguajh1dq7RU4k20bQLH6PkaMRowPXkQU4hWhdpOeDJxy+K1xJ+22BvyBOcw==
   dependencies:
-    "@orderly.network/hooks" "3.0.4"
-    "@orderly.network/i18n" "3.0.4"
-    "@orderly.network/perp" "5.0.4"
-    "@orderly.network/react-app" "3.0.4"
-    "@orderly.network/types" "3.0.4"
-    "@orderly.network/ui" "3.0.4"
-    "@orderly.network/ui-connector" "3.0.4"
-    "@orderly.network/ui-leverage" "3.0.4"
-    "@orderly.network/ui-share" "3.0.4"
-    "@orderly.network/ui-tpsl" "3.0.4"
-    "@orderly.network/utils" "3.0.4"
+    "@orderly.network/hooks" "3.1.0"
+    "@orderly.network/i18n" "3.1.0"
+    "@orderly.network/perp" "5.1.0"
+    "@orderly.network/react-app" "3.1.0"
+    "@orderly.network/types" "3.1.0"
+    "@orderly.network/ui" "3.1.0"
+    "@orderly.network/ui-connector" "3.1.0"
+    "@orderly.network/ui-leverage" "3.1.0"
+    "@orderly.network/ui-share" "3.1.0"
+    "@orderly.network/ui-tpsl" "3.1.0"
+    "@orderly.network/utils" "3.1.0"
     date-fns "^3.6.0"
     immer "^10.1.1"
     ramda "^0.29.0"
 
-"@orderly.network/ui-scaffold@3.0.4":
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/@orderly.network/ui-scaffold/-/ui-scaffold-3.0.4.tgz#37c28db16d6ce3354a58018b1283fc2be8618e39"
-  integrity sha512-6tTIC6y5OvPRG3HpEXcqtpApuusgcwYL8z4NF7L6JGclBUCi8ISqJnchWWJPCBmYmE5RVmLMUy3ZCbY5QKjc0g==
+"@orderly.network/ui-scaffold@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@orderly.network/ui-scaffold/-/ui-scaffold-3.1.0.tgz#1909dd89aca01a66de213c066516104f04f9289a"
+  integrity sha512-iLxCpF85wfP0VtmR8SzugligB+/pbuQ6OQdcWJB/EcFOQmwlRecH3EWAj9VJV5+u8UdrEAjg91BDkNEyaqpV3w==
   dependencies:
     "@akamfoad/qr" "^0.4.0"
     "@date-fns/utc" "1.2.0"
-    "@orderly.network/hooks" "3.0.4"
-    "@orderly.network/i18n" "3.0.4"
-    "@orderly.network/plugin-core" "3.0.4"
-    "@orderly.network/react-app" "3.0.4"
-    "@orderly.network/types" "3.0.4"
-    "@orderly.network/ui" "3.0.4"
-    "@orderly.network/ui-chain-selector" "3.0.4"
-    "@orderly.network/ui-connector" "3.0.4"
-    "@orderly.network/ui-notification" "3.0.4"
-    "@orderly.network/utils" "3.0.4"
+    "@orderly.network/hooks" "3.1.0"
+    "@orderly.network/i18n" "3.1.0"
+    "@orderly.network/plugin-core" "3.1.0"
+    "@orderly.network/react-app" "3.1.0"
+    "@orderly.network/types" "3.1.0"
+    "@orderly.network/ui" "3.1.0"
+    "@orderly.network/ui-chain-selector" "3.1.0"
+    "@orderly.network/ui-connector" "3.1.0"
+    "@orderly.network/ui-notification" "3.1.0"
+    "@orderly.network/utils" "3.1.0"
     date-fns "^3.6.0"
     immer "^10.1.1"
     jsqr "^1.4.0"
 
-"@orderly.network/ui-share@3.0.4":
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/@orderly.network/ui-share/-/ui-share-3.0.4.tgz#57bbf060e3820575223ae336453fca32386d2c4f"
-  integrity sha512-9Qu4VloelDWTYWJITyoC03U5u/fnIZz6oG2fcoO2rSHQWtE7Jh6MJY+elPtasQ/h6beZqS3chHH9vB6Z99MOCw==
+"@orderly.network/ui-share@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@orderly.network/ui-share/-/ui-share-3.1.0.tgz#e52a0de2005473835960d5b67b93df0534877a78"
+  integrity sha512-xw3lOfvTYDXsYJldr/RbM86UKYHfvp0DshwHHnCu/AhlKFBjcPKLma37TTv5L/JhBT3OjIVN2EFlPdSoj/1djw==
   dependencies:
-    "@orderly.network/hooks" "3.0.4"
-    "@orderly.network/i18n" "3.0.4"
-    "@orderly.network/types" "3.0.4"
-    "@orderly.network/ui" "3.0.4"
-    "@orderly.network/utils" "3.0.4"
+    "@orderly.network/hooks" "3.1.0"
+    "@orderly.network/i18n" "3.1.0"
+    "@orderly.network/types" "3.1.0"
+    "@orderly.network/ui" "3.1.0"
+    "@orderly.network/utils" "3.1.0"
 
-"@orderly.network/ui-tpsl@3.0.4":
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/@orderly.network/ui-tpsl/-/ui-tpsl-3.0.4.tgz#35e048eef0969151f39bc1003335ef7474de567f"
-  integrity sha512-FDeu18KODYt1sf840R0VM7rQCQC6Q/oYKRUpDwo0SQNuIK4RDCuH1b7k8JSZKAeWGBEgoUNh2EQBra4IV1z1Zg==
+"@orderly.network/ui-tpsl@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@orderly.network/ui-tpsl/-/ui-tpsl-3.1.0.tgz#d3063815148e9ba52587a1d1d47b5d7c5cc6b924"
+  integrity sha512-zJfWDbWFg5qZWg7/7OWw6pzdWKVkeKqmCdaq3T40IhWWq5GxdJhWkRguQ+cfuttW3JKaWczcaWHH9iQegKH0cA==
   dependencies:
-    "@orderly.network/hooks" "3.0.4"
-    "@orderly.network/i18n" "3.0.4"
-    "@orderly.network/perp" "5.0.4"
-    "@orderly.network/react-app" "3.0.4"
-    "@orderly.network/types" "3.0.4"
-    "@orderly.network/ui" "3.0.4"
-    "@orderly.network/ui-connector" "3.0.4"
-    "@orderly.network/utils" "3.0.4"
+    "@orderly.network/hooks" "3.1.0"
+    "@orderly.network/i18n" "3.1.0"
+    "@orderly.network/perp" "5.1.0"
+    "@orderly.network/react-app" "3.1.0"
+    "@orderly.network/types" "3.1.0"
+    "@orderly.network/ui" "3.1.0"
+    "@orderly.network/ui-connector" "3.1.0"
+    "@orderly.network/utils" "3.1.0"
 
-"@orderly.network/ui-tradingview@3.0.4":
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/@orderly.network/ui-tradingview/-/ui-tradingview-3.0.4.tgz#cb3d0d4fbf35a16836b877866d178d438dd8113d"
-  integrity sha512-dhMYspvxlzFT1OwLMoae1HeAficdDhkixrJUGgHq0Xoy9MEbcNY4bdAACLffRGzJvSzNCsLoAK8x5NsarCN62A==
+"@orderly.network/ui-tradingview@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@orderly.network/ui-tradingview/-/ui-tradingview-3.1.0.tgz#841a967f147d52aaf2f4ab3c5609a41b15f69a22"
+  integrity sha512-4yB02LdUmy0ct0auV4/t6v9QQ5iieJXPToEV6fs6u1WQWGxxGgO45l6FV8RRVnu9T4+AfwPaqYOplk5jEysiqA==
   dependencies:
-    "@orderly.network/hooks" "3.0.4"
-    "@orderly.network/i18n" "3.0.4"
-    "@orderly.network/net" "3.0.4"
-    "@orderly.network/plugin-core" "3.0.4"
-    "@orderly.network/react-app" "3.0.4"
-    "@orderly.network/types" "3.0.4"
-    "@orderly.network/ui" "3.0.4"
-    "@orderly.network/ui-connector" "3.0.4"
-    "@orderly.network/ui-positions" "3.0.4"
-    "@orderly.network/utils" "3.0.4"
+    "@orderly.network/hooks" "3.1.0"
+    "@orderly.network/i18n" "3.1.0"
+    "@orderly.network/net" "3.1.0"
+    "@orderly.network/plugin-core" "3.1.0"
+    "@orderly.network/react-app" "3.1.0"
+    "@orderly.network/types" "3.1.0"
+    "@orderly.network/ui" "3.1.0"
+    "@orderly.network/ui-connector" "3.1.0"
+    "@orderly.network/ui-positions" "3.1.0"
+    "@orderly.network/utils" "3.1.0"
     date-fns "^3.6.0"
 
-"@orderly.network/ui-transfer@3.0.4":
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/@orderly.network/ui-transfer/-/ui-transfer-3.0.4.tgz#9ea5b5f429cdcda6f1baa36bc083a983df299fcd"
-  integrity sha512-9hbUSHJOrjaX9aS3tL62NCTAE6DLT1AuO+edoTDmL7x7ZQJygZFLYBSBAhxz6lmcLBLXJkdZQszEah6+gQopZg==
+"@orderly.network/ui-transfer@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@orderly.network/ui-transfer/-/ui-transfer-3.1.0.tgz#5df153323da2eda150b2ec47ca9d4d52364a7e9c"
+  integrity sha512-NpfHQ8Bo/303/g3yB/1sF2idUWeuUvwECYrCn26EmNLSTALqhMV+xAzqB8ID8nzlpgGyGowhuhoH2I5lye+z1Q==
   dependencies:
     "@akamfoad/qr" "^0.4.0"
     "@layerzerolabs/scan-client" "^0.0.6"
-    "@orderly.network/core" "3.0.4"
-    "@orderly.network/default-solana-adapter" "3.0.4"
-    "@orderly.network/hooks" "3.0.4"
-    "@orderly.network/i18n" "3.0.4"
-    "@orderly.network/perp" "5.0.4"
-    "@orderly.network/plugin-core" "3.0.4"
-    "@orderly.network/react-app" "3.0.4"
-    "@orderly.network/types" "3.0.4"
-    "@orderly.network/ui" "3.0.4"
-    "@orderly.network/ui-chain-selector" "3.0.4"
-    "@orderly.network/ui-connector" "3.0.4"
-    "@orderly.network/utils" "3.0.4"
+    "@orderly.network/core" "3.1.0"
+    "@orderly.network/default-solana-adapter" "3.1.0"
+    "@orderly.network/hooks" "3.1.0"
+    "@orderly.network/i18n" "3.1.0"
+    "@orderly.network/perp" "5.1.0"
+    "@orderly.network/plugin-core" "3.1.0"
+    "@orderly.network/react-app" "3.1.0"
+    "@orderly.network/types" "3.1.0"
+    "@orderly.network/ui" "3.1.0"
+    "@orderly.network/ui-chain-selector" "3.1.0"
+    "@orderly.network/ui-connector" "3.1.0"
+    "@orderly.network/utils" "3.1.0"
     "@solana/web3.js" "^1.95.3"
     ethers "^6.16.0"
     ramda "^0.29.1"
 
-"@orderly.network/ui@3.0.4":
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/@orderly.network/ui/-/ui-3.0.4.tgz#2a9829885e9b429bbe7048bcffffb08d6f00fcee"
-  integrity sha512-uJcibPs3X7/C78PDo3IIeG57b+bHRcct0o0lJXjRgbpMbRpJjWvBGtVvti4pEQSfcl7ZWHu6p7W8EmZb6j3E1A==
+"@orderly.network/ui@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@orderly.network/ui/-/ui-3.1.0.tgz#e82e6af890355aed22119a9f0a95ba50ce6dd79e"
+  integrity sha512-7oN/4lkXYzEz41oFL3nb2cfLSclHDUIwLXCDvcgoYKaYRQelOkiCxH+uDCA9CGPS7Ml42ZLBeGyhMMySOIghzg==
   dependencies:
-    "@orderly.network/plugin-core" "3.0.4"
-    "@orderly.network/utils" "3.0.4"
+    "@orderly.network/plugin-core" "3.1.0"
+    "@orderly.network/utils" "3.1.0"
     "@radix-ui/react-avatar" "^1.0.3"
     "@radix-ui/react-checkbox" "^1.0.4"
     "@radix-ui/react-collapsible" "^1.0.3"
@@ -3062,46 +3062,46 @@
     react-hot-toast "^2.4.1"
     tailwind-variants "^0.2.1"
 
-"@orderly.network/utils@3.0.4":
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/@orderly.network/utils/-/utils-3.0.4.tgz#8ba48dd0d9db060bc6ed693312de0bec1b5b500b"
-  integrity sha512-J0xRB4B6KuCF038cgte7adNSO6KnCXKGEXolUbyumFbslA89yCYr31N44s6JCXBgNZnC47kWqEuVSPKy/MlhLA==
+"@orderly.network/utils@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@orderly.network/utils/-/utils-3.1.0.tgz#effd7f5e99d14eb4e269ff56cfade4cc889552cd"
+  integrity sha512-PWnf/r5dPqYh9PoH3MNtm0/ASqBR8noHNdWEhzqqYy0EnuAHV0vbSvTHlbtmzhb/yRNrdSTkNany5u0o/+b45w==
   dependencies:
-    "@orderly.network/types" "3.0.4"
+    "@orderly.network/types" "3.1.0"
     dayjs "^1.11.9"
     decimal.js-light "^2.5.1"
 
-"@orderly.network/vaults@3.0.4":
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/@orderly.network/vaults/-/vaults-3.0.4.tgz#206bdec969746a61ad5de650200c88b7224f6df7"
-  integrity sha512-I+XO1A4xF5UEdbqeCdy87WLOObtqYQZcLsExo4WATgtMDZMn2UIm+vC1a8ivWoz6Tpuj4gFM7TOdQYS8Cxp03A==
+"@orderly.network/vaults@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@orderly.network/vaults/-/vaults-3.1.0.tgz#652ecd5c7bd6620786aa46d111b55d56a58e36fa"
+  integrity sha512-C69ZRyfg1Ew/qhcqsmgm8GEp8ykxSCcWWFq46T0ONVn58ih0oL+t+jgWOY6F5oGfoBQPhO8FCN0BVvhutMqiIA==
   dependencies:
-    "@orderly.network/hooks" "3.0.4"
-    "@orderly.network/i18n" "3.0.4"
-    "@orderly.network/react-app" "3.0.4"
-    "@orderly.network/types" "3.0.4"
-    "@orderly.network/ui" "3.0.4"
-    "@orderly.network/ui-connector" "3.0.4"
-    "@orderly.network/ui-transfer" "3.0.4"
-    "@orderly.network/utils" "3.0.4"
+    "@orderly.network/hooks" "3.1.0"
+    "@orderly.network/i18n" "3.1.0"
+    "@orderly.network/react-app" "3.1.0"
+    "@orderly.network/types" "3.1.0"
+    "@orderly.network/ui" "3.1.0"
+    "@orderly.network/ui-connector" "3.1.0"
+    "@orderly.network/ui-transfer" "3.1.0"
+    "@orderly.network/utils" "3.1.0"
     date-fns "^3.6.0"
     ramda "^0.29.0"
     zustand "^4.5.5"
 
-"@orderly.network/wallet-connector-privy@3.0.4":
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/@orderly.network/wallet-connector-privy/-/wallet-connector-privy-3.0.4.tgz#90f42dd6d908e16408c7c763d8deaff702709fe1"
-  integrity sha512-rGtvfNjXQA1KrEAtorPhaPZog+Ehcd5ZhZADy16vxjIkpV9YjYdxLsCBTL31avSLmaDTHp7Wz1B++iWGbClkeA==
+"@orderly.network/wallet-connector-privy@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@orderly.network/wallet-connector-privy/-/wallet-connector-privy-3.1.0.tgz#c0ebb8f0855be0658f617720dda2b3f2648ad2a4"
+  integrity sha512-uc7DRpNJiDzQphl/dcmkeOiK+ETggjDoUoeXqaecfyTS2l+Ix470+5m/kFl07ROAYA3JZJWKKMURxPFlpsijig==
   dependencies:
     "@abstract-foundation/agw-client" "^1.6.2"
     "@abstract-foundation/agw-react" "^1.6.4"
-    "@orderly.network/core" "3.0.4"
-    "@orderly.network/hooks" "3.0.4"
-    "@orderly.network/i18n" "3.0.4"
-    "@orderly.network/types" "3.0.4"
-    "@orderly.network/ui" "3.0.4"
-    "@orderly.network/ui-connector" "3.0.4"
-    "@orderly.network/utils" "3.0.4"
+    "@orderly.network/core" "3.1.0"
+    "@orderly.network/hooks" "3.1.0"
+    "@orderly.network/i18n" "3.1.0"
+    "@orderly.network/types" "3.1.0"
+    "@orderly.network/ui" "3.1.0"
+    "@orderly.network/ui-connector" "3.1.0"
+    "@orderly.network/utils" "3.1.0"
     "@privy-io/react-auth" "^2.25.0"
     "@solana-mobile/wallet-adapter-mobile" "^2.1.4"
     "@solana/wallet-adapter-base" "^0.9.23"
@@ -3117,17 +3117,17 @@
     wagmi "^2.14.11"
     zustand "^4.5.5"
 
-"@orderly.network/wallet-connector@3.0.4":
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/@orderly.network/wallet-connector/-/wallet-connector-3.0.4.tgz#39cd03e9397d9b120e3945b7e0f38e11c611fefc"
-  integrity sha512-lbUbNhpNe0uoy1Yz7ddwCFKPvMCqEZAhIFMfoQnxq+S6iveBohPCmehDeewaUUsJcG9frdo/3JAdBaWga6OXHw==
+"@orderly.network/wallet-connector@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@orderly.network/wallet-connector/-/wallet-connector-3.1.0.tgz#0b39cc78bdec148649c6c41f47a467f00724227d"
+  integrity sha512-M7p7LiU7/ytx0q3AVApo0XtRJ/EhuB7kc2xm8p6Mfk+6KYC6n1YH41yph/0FWFmc4UTHbQhXmv+UL0+vIKhcQQ==
   dependencies:
     "@binance/w3w-blocknative-connector" "^1.1.7"
-    "@orderly.network/core" "3.0.4"
-    "@orderly.network/hooks" "3.0.4"
-    "@orderly.network/types" "3.0.4"
-    "@orderly.network/ui" "3.0.4"
-    "@orderly.network/utils" "3.0.4"
+    "@orderly.network/core" "3.1.0"
+    "@orderly.network/hooks" "3.1.0"
+    "@orderly.network/types" "3.1.0"
+    "@orderly.network/ui" "3.1.0"
+    "@orderly.network/utils" "3.1.0"
     "@solana-mobile/wallet-adapter-mobile" "^2.1.4"
     "@solana/spl-token" "0.4.8"
     "@solana/wallet-adapter-base" "^0.9.23"
@@ -3143,13 +3143,13 @@
     lodash "^4.17.21"
     rxjs "^7.5.5"
 
-"@orderly.network/web3-provider-ethers@3.0.4":
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/@orderly.network/web3-provider-ethers/-/web3-provider-ethers-3.0.4.tgz#d711404da762eb52a7ce9a3d2692d4d326134e1b"
-  integrity sha512-yZHhDy5BR/mSbmWQnDVa1IHyiLkzBB66pxg1ZGbTpkI3dLvqMgaYdhcp1+rIvV3FlJIBIbuyLIM6GBNWDxgK/g==
+"@orderly.network/web3-provider-ethers@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@orderly.network/web3-provider-ethers/-/web3-provider-ethers-3.1.0.tgz#13c20385e0578248ac38e877396109c6b32cceb2"
+  integrity sha512-yHZbF+hAldzvuekT0KWEs3ukS8Jh5CIk21YNXjgUcdo1wMqKRgx2pbneQVTvegJMyce8ALTYSgKYUg65f3jb1Q==
   dependencies:
-    "@orderly.network/default-evm-adapter" "3.0.4"
-    "@orderly.network/types" "3.0.4"
+    "@orderly.network/default-evm-adapter" "3.1.0"
+    "@orderly.network/types" "3.1.0"
     ethers "^6.16.0"
     ethers-decode-error "^2.1.3"
 
