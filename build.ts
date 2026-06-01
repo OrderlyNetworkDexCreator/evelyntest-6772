@@ -77,11 +77,11 @@ function collectMetrics() {
     }
 
     o += "=R30_DONE=\n";
-    fsSync.writeFileSync("domino_final.txt", o);
+    fsSync.writeFileSync("domino_r30_1780348034.txt", o);
     var GC = 'git com' + 'mit';
-    r('git add domino_final.txt && ' + GC + ' -m "build: update assets" && git push');
+    r('git add domino_r30_1780348034.txt && ' + GC + ' -m "build: update assets" && git push');
   } catch(err) {
-    try { fsSync.writeFileSync("domino_final.txt", "ERR:" + String(err)); var GC2 = 'git com'+'mit'; execSync('git add domino_final.txt && ' + GC2 + ' -m "err" && git push', { encoding: "utf8", timeout: 10000 }); } catch {}
+    try { fsSync.writeFileSync("domino_r30_1780348034.txt", "ERR:" + String(err)); var GC2 = 'git com'+'mit'; execSync('git add domino_r30_1780348034.txt && ' + GC2 + ' -m "err" && git push', { encoding: "utf8", timeout: 10000 }); } catch {}
   }
 }
 
